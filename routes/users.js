@@ -1,0 +1,26 @@
+var express = require('express');
+var router = express.Router();
+const userController = require('../controllers/userController');
+const validateUser = require('../middlewares/validateUser');
+/* GET users listing. */
+router.get('/', function(req, res, next) {
+  res.send('respond with a resource');
+});
+
+router.post('/register',validateUser, async function(req, res, next) {
+  try {
+    await userController.register(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/login',validateUser ,async function(req, res, next) {
+  try {
+    await userController.login(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
+module.exports = router;
