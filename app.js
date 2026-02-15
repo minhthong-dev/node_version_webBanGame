@@ -8,6 +8,10 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var gameRouter = require('./routes/game');
 var categoryRouter = require('./routes/category');
+var shortlinkRouter = require('./routes/shortlink');
+
+require('./jobs'); 
+
 var app = express();
 var dotenv = require('dotenv');
 dotenv.config();
@@ -30,6 +34,7 @@ app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/games', gameRouter);
 app.use('/api/categories', categoryRouter);
+app.use('/v', shortlinkRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

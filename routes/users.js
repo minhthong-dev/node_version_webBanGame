@@ -30,5 +30,11 @@ router.get('/all',validateAdmin,async function(req, res, next) {
     next(error);
   }
 });
-
+router.get('/verify-email', async function(req, res, next) {
+  try {
+    await userController.verifyEmail(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
 module.exports = router;
