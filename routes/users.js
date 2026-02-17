@@ -7,7 +7,15 @@ const validateAdmin = require('../middlewares/validateAdmin');
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
-
+// admin
+router.get('/all',validateAdmin,async function(req, res, next) {
+  try {
+    await userController.getAllUsers(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+// auth
 router.post('/register',validateUser, async function(req, res, next) {
   try {
     await userController.register(req, res);
@@ -23,16 +31,25 @@ router.post('/login',validateUser ,async function(req, res, next) {
     next(error);
   }
 });
-router.get('/all',validateAdmin,async function(req, res, next) {
+// xac nhan email
+router.get('/verify-email', async function(req, res, next) {
   try {
-    await userController.getAllUsers(req, res);
+    await userController.verifyEmail(req, res);
   } catch (error) {
     next(error);
   }
 });
-router.get('/verify-email', async function(req, res, next) {
+// forgot password
+router.post('/forgot-password', async function(req, res, next) {
   try {
-    await userController.verifyEmail(req, res);
+    await userController.forgotPassword(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+router.post('/reset-password',validateUser, async function(req, res, next) {
+  try {
+    await userController.resetPassword(req, res);
   } catch (error) {
     next(error);
   }

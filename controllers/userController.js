@@ -14,7 +14,7 @@ exports.register = async (req, res) => {
         }
         res.status(201).json({ message: "dang ky thanh cong, vui long kiem tra email de xac thuc tai khoan",});
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ message: "loi he thong" });
     }
 };
 
@@ -30,7 +30,7 @@ exports.login = async (req, res) => {
             res.status(401).json({ message: 'Invalid credentials' });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ message: "loi he thong" });
     }
 }
 exports.getAllUsers = async (req, res) => {
@@ -38,7 +38,7 @@ exports.getAllUsers = async (req, res) => {
         const users = await userService.getallUsers();
         res.status(200).json(users);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ message: "loi he thong" });
     }
 }
 // exports.sendVerifyEmail = async (req, res) => {
@@ -59,6 +59,34 @@ exports.verifyEmail = async (req, res) => {
         const { token, shortId } = req.query;
         await emailService.verifyEmail(token, shortId, res);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ message: "loi he thong" });
     }
-}   
+}
+// forgot password
+exports.forgotPassword = async (req, res) => {
+    try {
+        const { email, username } = req.body;
+        const result = await userService.fotgotPassword(email, username);
+        if (result.success) {
+            res.status(200).json({ message: "da gui email, vui long kiem tra" });
+        } else {
+            res.status(400).json({ message: "loi he thong" });
+            console.log(result.error);
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }       
+}
+exports.resetPassword = async (req, res) => {
+    try {
+        const { otp, newPassword } = req.body;
+        const result = await userService.resetPassword(otp, newPassword);
+        if (result.success) {
+            res.status(200).json({ message: "doi mat khau thanh cong" });
+        } else {
+            res.status(400).json({ message: result.error });
+        }
+    } catch (error) {
+        res.status(500).json({ message: "loi he thong" });
+    }       
+}

@@ -15,6 +15,7 @@ if (typeof fetch === "function") {
         throw new Error("No fetch available. Install node-fetch or use Node 18+.");
     }
 }
+// xac thuc email
 exports.sendEmailVerification = async (userId, email, verifyToken) => {
     try {
         const shortId = crypto.randomBytes(4).toString("hex");
@@ -62,5 +63,31 @@ exports.verifyEmail = async (token, shortId, res) => {
         return res.status(200).send("xin chao em iu");
     } catch (err) {
         return res.status(500).send(err.message);
+    }
+}
+// xac thuc otp forgot password
+exports.sendForgotPasswordOTP = async (userEmail, otpCode) => {
+    try {
+        const response = await fetch('https://email-tan-ten.vercel.app/api/sendResetMail', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userEmail,
+                otpCode
+            })
+        });
+
+        if (!response.ok) {
+            const errText = await response.text();
+            console.error('Error from Vercel API:', errText);
+            return false;
+        }
+
+        // console.log('Reset email request sent successfully via Vercel API');
+        return true;
+
+    } catch (err) {
+        console.error('Failed to send reset email via Vercel API:', err);
+        return false;
     }
 }

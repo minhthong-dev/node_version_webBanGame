@@ -1,8 +1,8 @@
 const cronjob = require('node-cron');
 const checkVerifyToken = require('./checkVerifyToken');
 
-// Schedule the job to run every miniute
-cronjob.schedule('* * * * *', () => {
+// Schedule the job to run 15 miniute
+cronjob.schedule('15 * * * *', () => {
     console.log('Running checkVerifyToken job every minute');
     checkVerifyToken.checkVerifyToken();
 });

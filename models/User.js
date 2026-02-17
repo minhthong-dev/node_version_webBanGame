@@ -22,6 +22,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ['user', 'admin'],
         default: 'user'
+    },
+    otpForgotPassword: {
+        type: String,
+        default: null
+    },
+    otpForgotPasswordExpiry: {
+        type: Date,
+        default: null
     }
 }, { timestamps: true });
 //bam mat khau
