@@ -14,7 +14,7 @@ exports.createGame = async (req, res) => {
 exports.getAllGames = async (req, res) => {
     try {
         const games = await gameService.getAllGames();
-        return res.status(200).json(games);
+        return res.status(200).json({ data: games });
     } catch (error) {
         return res.status(500).json({ error: 'loi loi loi' });
     }

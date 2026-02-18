@@ -22,7 +22,7 @@ exports.register = async (req, res) => {
         userData.verifyTokenExpiry = verifyToken.generateVerifyTokenWithExpiry();
         const newUser = await userService.registerUser(userData);
         await emailService.sendEmailVerification(newUser._id, newUser.email, userData.verifyToken);
-        res.status(201).json({ message: "dang ky thanh cong, vui long kiem tra email de xac thuc tai khoan",});
+        res.status(200).json({ message: "dang ky thanh cong, vui long kiem tra email de xac thuc tai khoan",});
     } catch (error) {
         res.status(500).json({ message: "loi he thong" });
     }
