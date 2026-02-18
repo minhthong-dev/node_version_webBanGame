@@ -60,10 +60,45 @@ exports.searchGames = async (req, res) => {
     try {
         console.log('Received search request with query:', req.query);
         const query = req.query;
-        const games = await gameService.serchGames(query);
+        const games = await gameService.searchGames(query);
         return res.json(games);
     } catch (error) {
         return res.status(500).json({ error: 'loi loi loi ' });
         console.error('Error searching games:', error);     
     }
 };
+exports.uploadCoverImage = async (req, res) => {
+    try {
+        const { gameId } = req.body;
+        const filePath = req.file.path;
+        const result = await gameService.uploadCoverImage(gameId, filePath);
+        return res.json({ message: 'Upload thành công', data: result });
+    } catch (error) {
+        console.error('Lỗi khi upload cover image: ', error);
+        return res.status(500).json({ error: error.message });
+    }
+};
+exports.uploadScreenshotImage = async (req, res) => {
+    try {
+        const { gameId } = req.body;
+        const files = req.files.images;
+        if (!files || files.length === 0) {
+            return res.status(400).json({ error: 'Không có ảnh screenshot nào được tải lên' });
+        }
+        const result = await gameService.uploadScreenshotImage(gameId, files);
+        return res.json({ message: 'Upload thành công', data: result });
+    } catch (error) {
+        console.error('Lỗi khi upload screenshot: ', error);
+        return res.status(500).json({ error: error.message });
+    }
+}
+exports.deleteImage = async (req, res) => {
+    try {
+        const { gameId, type, imageUrl } = req.body;
+        await gameService.deleteImage(gameId, type, imageUrl);
+        return res.json({ message: 'Xóa ảnh thành công' });
+    } catch (error) {
+        console.error('Lỗi khi xóa ảnh: ', error);
+        return res.status(500).json({ error: error.message });
+    }
+}

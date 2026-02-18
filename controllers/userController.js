@@ -1,17 +1,27 @@
 const userService = require('../services/userService');
 const emailService = require('../services/emailService');
 const verifyToken  = require('../utils/verifyToken');
+const User = require('../models/User');
+
 exports.register = async (req, res) => {
     try {
         const userData = req.body;
+
+        // Check if user already exists
+        const existingUser = await User.findOne({ $or: [{ email: userData.email }, { username: userData.username }] });
+        if (existingUser) {
+            if (existingUser.email === userData.email) {
+                return res.status(400).json({ message: 'Email da duoc su dung' });
+            }
+            if (existingUser.username === userData.username) {
+                return res.status(400).json({ message: 'Username da duoc su dung' });
+            }
+        }
+
         userData.verifyToken = verifyToken.generateVerifyToken();
         userData.verifyTokenExpiry = verifyToken.generateVerifyTokenWithExpiry();
         const newUser = await userService.registerUser(userData);
-        const shortUrl = await emailService.sendEmailVerification(newUser._id, newUser.email, userData.verifyToken);
-        console.log("shortUrl:", shortUrl);
-        if (!shortUrl) {
-            res.status(400).json({ message: "loi trong qua trinh gui email xac thuc" , shortUrl });
-        }
+        await emailService.sendEmailVerification(newUser._id, newUser.email, userData.verifyToken);
         res.status(201).json({ message: "dang ky thanh cong, vui long kiem tra email de xac thuc tai khoan",});
     } catch (error) {
         res.status(500).json({ message: "loi he thong" });

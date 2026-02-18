@@ -5,7 +5,7 @@ const gameSchema = new mongoose.Schema({
     releaseDate : { type: Date, required: true },
     content : { type: String, required: true },
     downloadKey : { type: String, required: true },
-    genere : { type: [String], required: true, default: [], trim: true },
+    genre : { type: [String], required: true, default: [], trim: true },
     price : { type: Number, required: true, default: 0, min: 0 },
     like : { type: Number, required: true, default: 0, min: 0 },
     dislike : { type: Number, required: true, default: 0, min: 0 },
