@@ -6,6 +6,24 @@ const emailService = require('./emailService');
 const getallUsers = async () => {
     return await User.find({});
 }
+const blockUser = async (res, req) => {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+        return { error: "user khong ton tai" };
+    }
+    user.isBlock = !user.isBlock;
+    await user.save();
+    return { success: true };
+}
+const unblockUser = async (res, req) => {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+        return { error: "user khong ton tai" };
+    }
+    user.isBlock = !user.isBlock;
+    await user.save();
+    return { success: true };
+}
 // auth
 const registerUser = async (userData) => {
     const user = new User(userData);
@@ -28,7 +46,7 @@ const fotgotPassword = async (email, username) => {
     const user = await User.findOne({ email, username });
     if (!user) {
         return { error: "user khong ton tai" };
-        
+
     }
     const OTP_EXTRA_TIME = 15 * 60 * 1000; // 15 minutes
     const otp = otpUtils.generateOTP();
@@ -37,7 +55,7 @@ const fotgotPassword = async (email, username) => {
     user.otpForgotPasswordExpiry = otpExpiry;
     await user.save();
     if (!user.isVerified) {
-        
+
         return { error: "user chua xac thuc email" };
     }
     emailService.sendForgotPasswordOTP(user.email, otp);

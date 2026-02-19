@@ -1,11 +1,13 @@
 const mongoose = require('mongoose');
 const bycrypt = require('bcrypt');
+const { boolean } = require('joi');
 const userSchema = new mongoose.Schema({
     username: String,
     email: String,
     password: String,
     avatar: { type: String },
     themePic: { type: String },
+    isBlock: { type: Boolean, default: false },
     isVerified: {
         type: Boolean,
         default: null
@@ -39,7 +41,7 @@ userSchema.pre('save', async function () {
             const salt = await bycrypt.genSalt(10);
             this.password = await bycrypt.hash(this.password, salt);
         }
-        
+
     } catch (err) {
         throw err;
     }

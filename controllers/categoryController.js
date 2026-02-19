@@ -12,7 +12,7 @@ exports.createCategory = async (req, res) => {
     try {
         const { name } = req.body;
         const newCategory = await categoryService.createCategory(name);
-        res.status(201).json(newCategory);
+        res.status(201).json({ sussecc: true, data: newCategory });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
