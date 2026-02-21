@@ -10,6 +10,13 @@ router.get('/', async (req, res) => {
         res.status(500).json({ error: 'loi khi lay danh sach danh muc' });
     }
 });
+router.get('/:id', async (req, res) => {
+    try {
+        await categoryController.getByIdCategories(req, res);
+    } catch (error) {
+        res.status(500).json({ error: 'loi khi lay danh sach danh muc' });
+    }
+});
 router.post('/create', validateAdmin, validateCategories, async (req, res) => {
     try {
         console.log("nhan tu sever: ", req, res);

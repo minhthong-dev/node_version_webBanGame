@@ -35,7 +35,7 @@ exports.unblockUser = async (req, res) => {
 exports.register = async (req, res) => {
     try {
         const userData = req.body;
-
+        console.log("nhan tu sever: ", req.body);
         // Check if user already exists
         const existingUser = await User.findOne({ $or: [{ email: userData.email }, { username: userData.username }] });
         if (existingUser) {
@@ -50,7 +50,11 @@ exports.register = async (req, res) => {
         userData.verifyToken = verifyToken.generateVerifyToken();
         userData.verifyTokenExpiry = verifyToken.generateVerifyTokenWithExpiry();
         const newUser = await userService.registerUser(userData);
-        await emailService.sendEmailVerification(newUser._id, newUser.email, userData.verifyToken);
+        try {
+            await emailService.sendEmailVerification(newUser._id, newUser.email, userData.verifyToken);
+        } catch (err) {
+            console.log('loi dcm: ', err)
+        }
         res.status(200).json({ message: "dang ky thanh cong, vui long kiem tra email de xac thuc tai khoan", });
     } catch (error) {
         res.status(500).json({ message: "loi he thong" });

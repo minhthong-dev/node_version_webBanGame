@@ -63,8 +63,8 @@ exports.searchGames = async (req, res) => {
         const games = await gameService.searchGames(query);
         return res.json(games);
     } catch (error) {
+        console.error('Error searching games:', error);
         return res.status(500).json({ error: 'loi loi loi ' });
-        console.error('Error searching games:', error);     
     }
 };
 exports.uploadCoverImage = async (req, res) => {

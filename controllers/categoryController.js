@@ -8,6 +8,16 @@ exports.getAllCategories = async (req, res) => {
         res.status(500).json({ error: 'loi khi lay danh sach danh muc' });
     }
 }
+exports.getByIdCategories = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const category = await categoryService.getByIdCategories(id);
+        res.status(200).json(category);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+// admin
 exports.createCategory = async (req, res) => {
     try {
         console.log("nhan tu sever: ", req, res);

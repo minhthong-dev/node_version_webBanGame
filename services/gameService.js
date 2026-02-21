@@ -1,7 +1,7 @@
 const gameModel = require('../models/Game');
 //const userModel = require('../models/userModel');
 const uploadImage = require('../utils/cloudinary/uploadImage');
-
+const crypto = require('../utils/cryptojs');
 
 const createGame = async (gameData) => {
     const game = new gameModel(gameData);
@@ -20,30 +20,46 @@ const updateGame = async (gameId, gameData) => {
 const deleteGame = async (gameId) => {
     return await gameModel.findByIdAndDelete(gameId);
 }
-const searchGames = async (query) => {
-    console.log('Received search query in service:', query);
+const searchGames = async (params) => {
+    console.log('Received search params in service:', params);
+    let decodeQuery = {};
+    try {
+        const encryptedData = params.q || params;
+        decodeQuery = crypto.decrypt(encryptedData);
+        console.log('Decoded query:', decodeQuery);
+    } catch (error) {
+        console.error('Error decrypting query:', error);
+        return [];
+    }
     let searchQuery = {};
-    const { name, genre, platform, releaseDate, minPrice, maxPrice } = query;
+
+    const { name, genre, platform, releaseDate, minPrice, maxPrice } = decodeQuery;
     console.log('Parsed query parameters:', { name, genre, platform, releaseDate, minPrice, maxPrice });
-    if (query.name) {
-        searchQuery.name = { $regex: query.name, $options: 'i' };
+    if (decodeQuery.name) {
+        searchQuery.name = { $regex: decodeQuery.name, $options: 'i' };
     }
-    if (query.genre) {
-        searchQuery.genre = { $regex: query.genre, $options: 'i' };
+    if (decodeQuery.genre) {
+        searchQuery.genre = { $regex: decodeQuery.genre, $options: 'i' };
     }
-    if (query.platform) {
-        searchQuery.platform = { $regex: query.platform, $options: 'i' };
+    if (decodeQuery.platform) {
+        searchQuery.platform = { $regex: decodeQuery.platform, $options: 'i' };
     }
-    if (query.releaseDate) {
-        searchQuery.releaseDate = { $regex: query.releaseDate, $options: 'i' };
+    if (decodeQuery.releaseDate) {
+        searchQuery.releaseDate = { $regex: decodeQuery.releaseDate, $options: 'i' };
     }
-    if (query.minPrice || query.maxPrice) {
-        searchQuery.price = {};
-        if (query.minPrice) {
-            searchQuery.price.$gte = query.minPrice;
+    if (decodeQuery.minPrice !== undefined && decodeQuery.minPrice !== '') {
+        const min = Number(decodeQuery.minPrice);
+        //console.log('min: ', min);
+        if (!isNaN(min)) {
+            if (!searchQuery.price) searchQuery.price = {};
+            searchQuery.price.$gte = min;
         }
-        if (query.maxPrice) {
-            searchQuery.price.$lte = query.maxPrice;
+    }
+    if (decodeQuery.maxPrice !== undefined && decodeQuery.maxPrice !== '') {
+        const max = Number(decodeQuery.maxPrice);
+        if (!isNaN(max)) {
+            if (!searchQuery.price) searchQuery.price = {};
+            searchQuery.price.$lte = max;
         }
     }
     return await gameModel.find(searchQuery);
