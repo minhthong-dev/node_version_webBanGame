@@ -11,7 +11,7 @@ const blockUser = async (res, req) => {
     if (!user) {
         return { error: "user khong ton tai" };
     }
-    user.isBlock = !user.isBlock;
+    user.isBlock = true;
     await user.save();
     return { success: true };
 }
@@ -20,7 +20,7 @@ const unblockUser = async (res, req) => {
     if (!user) {
         return { error: "user khong ton tai" };
     }
-    user.isBlock = !user.isBlock;
+    user.isBlock = false;
     await user.save();
     return { success: true };
 }
@@ -85,5 +85,7 @@ module.exports = {
     loginUser,
     getallUsers,
     fotgotPassword,
-    resetPassword
+    resetPassword,
+    blockUser,
+    unblockUser
 };

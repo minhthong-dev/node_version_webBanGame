@@ -10,6 +10,7 @@ exports.getAllCategories = async (req, res) => {
 }
 exports.createCategory = async (req, res) => {
     try {
+        console.log("nhan tu sever: ", req, res);
         const { name } = req.body;
         const newCategory = await categoryService.createCategory(name);
         res.status(201).json({ sussecc: true, data: newCategory });

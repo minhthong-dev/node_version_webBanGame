@@ -1,8 +1,37 @@
 const userService = require('../services/userService');
 const emailService = require('../services/emailService');
-const verifyToken  = require('../utils/verifyToken');
+const verifyToken = require('../utils/verifyToken');
 const User = require('../models/User');
-
+// admin
+exports.getAllUsers = async (req, res) => {
+    try {
+        const users = await userService.getallUsers();
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ message: "loi he thong" });
+    }
+}
+exports.blockUser = async (req, res) => {
+    try {
+        const result = await userService.blockUser(res, req);
+        if (result) {
+            return res.status(200).json({ message: 'block nguoi dung thanh cong' })
+        } else {
+            return res.status(200).json({ message: 'block nguoi dung thanh cong' })
+        }
+    } catch (error) { res.status(500).json({ error: 'loi loi roi cac ban oi' }) }
+}
+exports.unblockUser = async (req, res) => {
+    try {
+        const result = await userService.unblockUser(res, req);
+        if (result) {
+            return res.status(200).json({ message: 'bo block nguoi dung thanh cong' })
+        } else {
+            return res.status(200).json({ message: 'bo block nguoi dung thanh cong' })
+        }
+    } catch (error) { res.status(500).json({ error: 'loi loi roi cac ban oi' }) }
+}
+// auth
 exports.register = async (req, res) => {
     try {
         const userData = req.body;
@@ -22,7 +51,7 @@ exports.register = async (req, res) => {
         userData.verifyTokenExpiry = verifyToken.generateVerifyTokenWithExpiry();
         const newUser = await userService.registerUser(userData);
         await emailService.sendEmailVerification(newUser._id, newUser.email, userData.verifyToken);
-        res.status(200).json({ message: "dang ky thanh cong, vui long kiem tra email de xac thuc tai khoan",});
+        res.status(200).json({ message: "dang ky thanh cong, vui long kiem tra email de xac thuc tai khoan", });
     } catch (error) {
         res.status(500).json({ message: "loi he thong" });
     }
@@ -33,20 +62,13 @@ exports.login = async (req, res) => {
         const { loginKey, password } = req.body;
         const user = await userService.loginUser(loginKey, password);
         if (user && user.token) {
-            res.status(200).json({ message: "dang nhap thanh cong",
+            res.status(200).json({
+                message: "dang nhap thanh cong",
                 token: user.token
-             });
+            });
         } else {
             res.status(401).json({ message: 'Invalid credentials' });
         }
-    } catch (error) {
-        res.status(500).json({ message: "loi he thong" });
-    }
-}
-exports.getAllUsers = async (req, res) => {
-    try {
-        const users = await userService.getallUsers();
-        res.status(200).json(users);
     } catch (error) {
         res.status(500).json({ message: "loi he thong" });
     }
@@ -85,7 +107,7 @@ exports.forgotPassword = async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ error: error.message });
-    }       
+    }
 }
 exports.resetPassword = async (req, res) => {
     try {
@@ -98,5 +120,5 @@ exports.resetPassword = async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ message: "loi he thong" });
-    }       
+    }
 }
