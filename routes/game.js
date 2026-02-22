@@ -8,7 +8,23 @@ const upload = multer({ dest: 'uploads/' });
 router.get('/test', (req, res) => {
     res.json({ message: 'Game routes are working!' });
 });
+//wishlist
+router.post('/wishlist', gameController.addToWishlist);
 
+router.delete('/wishlist', gameController.removeFromWishlist);
+
+router.get('/wishlist/:userid', gameController.getWishlistByUserId);
+
+router.get('/wishlist/:gameId/:userId', gameController.isWishlist);
+//like
+router.post('/like', gameController.like);
+
+router.delete('/unlike', gameController.unlike);
+
+router.get('/like/:userid', gameController.getLikesByUserId);
+
+router.get('/like/:gameId/:userId', gameController.isLike);
+//game
 router.post('/create', validateAdmin, gameController.createGame);
 
 router.get('/all', gameController.getAllGames);
@@ -20,7 +36,7 @@ router.get('/:id', gameController.getGameById);
 router.put('/:id', validateAdmin, gameController.updateGame);
 
 router.delete('/:id', validateAdmin, gameController.deleteGame);
-
+//upload
 router.post(
     '/upload-cover',
     upload.single('image'),
@@ -35,6 +51,7 @@ router.post(
     gameController.uploadScreenshotImage
 );
 
-router.delete('/delete-image', validateAdmin, gameController.deleteImage);
+router.delete('/delete-image/:id', validateAdmin, gameController.deleteImage);
+
 
 module.exports = router;

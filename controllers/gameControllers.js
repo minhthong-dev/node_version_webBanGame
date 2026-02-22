@@ -94,11 +94,95 @@ exports.uploadScreenshotImage = async (req, res) => {
 }
 exports.deleteImage = async (req, res) => {
     try {
-        const { gameId, type, imageUrl } = req.body;
-        await gameService.deleteImage(gameId, type, imageUrl);
+        const gameId = req.params.id;
+        const { type, imageUrl } = req.body;
+        await gameService.deleteImageSer(gameId, type, imageUrl);
         return res.json({ message: 'Xóa ảnh thành công' });
     } catch (error) {
         console.error('Lỗi khi xóa ảnh: ', error);
         return res.status(500).json({ error: error.message });
+    }
+}
+exports.addToWishlist = async (req, res) => {
+    try {
+        const { gameId, userId } = req.body;
+        await gameService.addToWishlist(gameId, userId);
+        return res.status(200).json({ message: 'Thêm vào wishlist thành công' });
+    } catch (error) {
+        console.error('Lỗi khi thêm vào wishlist: ', error);
+        return res.status(500).json({ error: error.message });
+    }
+}
+exports.removeFromWishlist = async (req, res) => {
+    try {
+        const { gameId, userId } = req.body;
+        await gameService.removeFromWishlist(gameId, userId);
+        return res.status(200).json({ message: 'Xóa khỏi wishlist thành công' });
+    } catch (error) {
+        console.error('Lỗi khi xóa khỏi wishlist: ', error);
+        return res.status(500).json({ error: error.message });
+    }
+}
+exports.isWishlist = async (req, res) => {
+    try {
+        const gameId = req.params.gameId;
+        const userId = req.params.userId;
+        const result = await gameService.isWishlist(gameId, userId);
+        return res.status(200).json({ isWishlist: result });
+    } catch (error) {
+        console.error('Lỗi khi kiểm tra wishlist');
+        return res.status(500).json({ error: 'loi nhu em' });
+    }
+}
+exports.getWishlistByUserId = async (req, res) => {
+    try {
+        const userId = req.params.userid;
+        const game = await gameService.getWishlistByUserId(userId);
+        return res.status(200).json({ message: 'Lấy wishlist thành công', data: game });
+    } catch (error) {
+        console.error('Lỗi khi lấy wishlist: ', error);
+        return res.status(500).json({ error: 'loi nhu em' });
+    }
+}
+exports.like = async (req, res) => {
+    try {
+        const { gameId, userId } = req.body;
+        console.log('gameId: ', gameId, 'userId: ', userId);
+        await gameService.like(gameId, userId);
+        return res.status(200).json({ message: 'Thêm vào wishlist thành công' });
+    } catch (error) {
+        console.error('Lỗi khi thêm vào wishlist: ', error);
+        return res.status(500).json({ error: error.message });
+    }
+}
+exports.unlike = async (req, res) => {
+    try {
+        const { gameId, userId } = req.body;
+        await gameService.unlike(gameId, userId);
+        return res.status(200).json({ message: 'Xóa khỏi wishlist thành công' });
+    } catch (error) {
+        console.error('Lỗi khi xóa khỏi wishlist: ', error);
+        return res.status(500).json({ error: error.message });
+    }
+}
+exports.isLike = async (req, res) => {
+    try {
+        const gameId = req.params.gameId;
+        const userId = req.params.userId;
+        const result = await gameService.isLike(gameId, userId);
+        return res.status(200).json({ isLike: result });
+    } catch (error) {
+        console.error('Lỗi khi kiểm tra wishlist');
+        return res.status(500).json({ error: 'loi nhu em' });
+    }
+}
+exports.getLikesByUserId = async (req, res) => {
+    try {
+        const userId = req.params.userid;
+        const game = await gameService.getLikesByUserId(userId);
+        return res.status(200).json({ message: 'Lấy wishlist thành công', data: game });
+    } catch (error) {
+        console.error('Lỗi khi lấy wishlist: ', error);
+        return res.status(500).json({ error: 'loi nhu em' });
     }
 }
