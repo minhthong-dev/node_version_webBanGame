@@ -284,6 +284,18 @@ const isLike = async (gameId, userId) => {
         throw error;
     }
 }
+const getLikesCount = async (gameId) => {
+    try {
+        const game = await gameModel.findById(gameId);
+        if (!game) {
+            throw new Error('Game không tồn tại');
+        }
+        return game.like.length;
+    } catch (error) {
+        console.error('Error getting likes count:', error);
+        throw error;
+    }
+}
 module.exports = {
     createGame,
     getAllGames,
@@ -301,5 +313,6 @@ module.exports = {
     like,
     unlike,
     getLikesByUserId,
-    isLike
+    isLike,
+    getLikesCount
 };

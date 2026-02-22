@@ -186,3 +186,13 @@ exports.getLikesByUserId = async (req, res) => {
         return res.status(500).json({ error: 'loi nhu em' });
     }
 }
+exports.getLikesCount = async (req, res) => {
+    try {
+        const gameId = req.params.gameId;
+        const result = await gameService.getLikesCount(gameId);
+        return res.status(200).json({ message: 'Lấy số lượt thích thành công', data: result });
+    } catch (error) {
+        console.error('Lỗi khi lấy số lượt thích: ', error);
+        return res.status(500).json({ error: 'loi nhu em' });
+    }
+}

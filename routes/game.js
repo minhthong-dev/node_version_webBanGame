@@ -21,9 +21,12 @@ router.post('/like', gameController.like);
 
 router.delete('/unlike', gameController.unlike);
 
+router.get('/like/count/:gameId', gameController.getLikesCount);
+
 router.get('/like/:userid', gameController.getLikesByUserId);
 
 router.get('/like/:gameId/:userId', gameController.isLike);
+
 //game
 router.post('/create', validateAdmin, gameController.createGame);
 
