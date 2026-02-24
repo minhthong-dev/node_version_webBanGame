@@ -30,9 +30,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.listen(3636, () => {
-  console.log('Server is running on port 3636');
-});
+// app.listen(3636, () => {
+//   console.log('Server is running on port 3636');
+// });
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/games', gameRouter);

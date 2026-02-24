@@ -38,6 +38,9 @@ const loginUser = async (loginKey, password) => {
     if (!isMatch) {
         return { error: "mat khau khong dung" };
     }
+    if (user.isBlock) {
+        return { error: "user bi khoa" };
+    }
     const token = require('jsonwebtoken').sign({ id: user._id, role: user.role, username: user.username, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
     return { ...user._doc, token };
 }

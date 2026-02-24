@@ -3,7 +3,8 @@ const router = express.Router();
 const categoryController = require('../controllers/categoryController');
 const validateAdmin = require('../middlewares/validateAdmin');
 const validateCategories = require('../middlewares/validateCategories');
-router.get('/', async (req, res) => {
+const validateTokenExpires = require('../middlewares/validateTokenExpires');
+router.get('/', validateTokenExpires, async (req, res) => {
     try {
         await categoryController.getAllCategories(req, res);
     } catch (error) {
