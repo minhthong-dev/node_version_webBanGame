@@ -25,12 +25,22 @@ const getDiscountById = async (id) => {
 const createDiscount = async (discountData) => {
     try {
         const discount = new discountModel(discountData);
+        const gameExitDiscount = await discountModel.find({
+            //isActive: true,
+            $or: [
+                { categoriesId: { $in: discountData.categoriesId } },
+                { gamesId: { $in: discountData.gamesId } }
+            ]
+        });
 
+        if (gameExitDiscount.length > 0) {
+            throw new Error('Mã giảm giá đã tồn tại');
+        }
         await discount.save();
         return discount;
     } catch (error) {
         console.log(error)
-        throw new Error('Lỗi khi tạo mã giảm giá');
+        throw new Error(error.message);
     }
 }
 
