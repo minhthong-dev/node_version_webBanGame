@@ -1,0 +1,10 @@
+const discountController = require('../controllers/discountController');
+const express = require('express');
+const router = express.Router();
+const validateAdmin = require('../middlewares/validateAdmin');
+router.get('/', discountController.getAllDiscounts);
+router.get('/:id', discountController.getDiscountById);
+router.post('/', validateAdmin, discountController.createDiscount);
+router.put('/:id', validateAdmin, discountController.updateDiscount);
+router.delete('/:id', validateAdmin, discountController.deleteDiscount);
+module.exports = router;

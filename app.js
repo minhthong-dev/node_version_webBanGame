@@ -11,6 +11,7 @@ var gameRouter = require('./routes/game');
 var categoryRouter = require('./routes/category');
 var shortlinkRouter = require('./routes/shortlink');
 var cartRouter = require('./routes/cart');
+var discountRouter = require('./routes/discount');
 
 require('./jobs');
 
@@ -39,7 +40,7 @@ app.use('/api/games', gameRouter);
 app.use('/api/categories', categoryRouter);
 app.use('/v', shortlinkRouter);
 app.use('/api/cart', cartRouter);
-
+app.use('/api/discount', discountRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
