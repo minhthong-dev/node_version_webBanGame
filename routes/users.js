@@ -79,4 +79,11 @@ router.post('/payment-link'
       next(error);
     }
   });
+router.post('/webhook', async function (req, res, next) {
+  try {
+    await userController.updateAmout(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
 module.exports = router;

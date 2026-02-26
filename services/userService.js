@@ -88,6 +88,21 @@ const createPaymentLink = async (amount, description, orderCode) => {
     const paymentLink = await paymentService.createPaymentLink(amount, description, orderCode);
     return paymentLink;
 }
+const updateAmount = async (userId, amount) => {
+    console.log(userId, amount)
+    try {
+        const user = await User.findById(userId)
+        if (!user) {
+            return false;
+        }
+        user.amount += amount
+        await user.save()
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+    return true;
+}
 module.exports = {
     registerUser,
     loginUser,
@@ -96,5 +111,6 @@ module.exports = {
     resetPassword,
     blockUser,
     unblockUser,
-    createPaymentLink
+    createPaymentLink,
+    updateAmount
 };

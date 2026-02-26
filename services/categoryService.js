@@ -1,6 +1,6 @@
 const express = require('express');
 const categoryModel = require('../models/Category');
-const { update } = require('apt');
+//const { update } = require('apt');
 
 
 const getAllCategories = async () => {

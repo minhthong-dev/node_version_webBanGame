@@ -135,12 +135,29 @@ exports.resetPassword = async (req, res) => {
 }
 exports.createPaymentLink = async (req, res) => {
     try {
-        const orderCode = Date.now();
-        const { amount, description } = req.body;
+        // const orderCode = Date.now();
+        const { amount, description, orderCode } = req.body;
         const paymentLink = await userService.createPaymentLink(amount, description, orderCode);
         res.status(200).json(paymentLink);
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "loi he thong" });
+    }
+}
+exports.updateAmout = async (req, res) => {
+    try {
+        if (req.body.code !== '00') {
+            return res.status(400).json({ message: "co van de" });
+        }
+        const userId = req.body.data.description
+        const amount = req.body.data.amount
+        const result = await userService.updateAmount(userId, amount)
+        if (result) {
+            res.status(200).json({ message: "cap nhat thanh cong" });
+        } else {
+            res.status(400).json({ message: "loi he thong" });
+        }
+    } catch (error) {
+
     }
 }
