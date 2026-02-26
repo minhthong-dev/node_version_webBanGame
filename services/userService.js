@@ -2,6 +2,7 @@ const User = require('../models/User');
 const otpUtils = require('../utils/optForgotPassWord');
 const emailService = require('./emailService');
 const paymentService = require('./paymentService');
+const historyService = require('./historyService');
 // admin
 const getallUsers = async () => {
     return await User.find({});
@@ -41,7 +42,7 @@ const loginUser = async (loginKey, password) => {
     if (user.isBlock) {
         return { error: "user bi khoa" };
     }
-    const token = require('jsonwebtoken').sign({ id: user._id, role: user.role, username: user.username, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = require('jsonwebtoken').sign({ id: user._id, role: user.role, username: user.username, email: user.email, amount: user.amount }, process.env.JWT_SECRET, { expiresIn: '1h' });
     return { ...user._doc, token };
 }
 // forgot password
@@ -84,9 +85,16 @@ const resetPassword = async (otp, newPassword, date) => {
     return { success: true };
 }
 // payment
-const createPaymentLink = async (amount, description, orderCode) => {
-    const paymentLink = await paymentService.createPaymentLink(amount, description, orderCode);
-    return paymentLink;
+const createPaymentLink = async (amount, description, orderCode, userId) => {
+    const user = await User.findById(userId)
+    if (!user) {
+        return { error: "user khong ton tai" };
+    } else {
+        const paymentLink = await paymentService.createPaymentLink(amount, description, orderCode);
+        console.log("payment link: ", paymentLink);
+        return paymentLink;
+    }
+    return { error: "user khong ton tai" };
 }
 const updateAmount = async (userId, amount) => {
     console.log(userId, amount)
@@ -96,6 +104,7 @@ const updateAmount = async (userId, amount) => {
             return false;
         }
         user.amount += amount
+        await historyService.createHistory(userId, 'amount', amount, []);
         await user.save()
     } catch (error) {
         console.log(error);

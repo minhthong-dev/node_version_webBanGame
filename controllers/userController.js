@@ -136,9 +136,13 @@ exports.resetPassword = async (req, res) => {
 }
 exports.createPaymentLink = async (req, res) => {
     try {
-        // const orderCode = Date.now();
-        const { amount, description, orderCode } = req.body;
-        const paymentLink = await userService.createPaymentLink(amount, description, orderCode);
+        const orderCode = Number(Date.now());
+        const { amount, description } = req.body;
+        //const parts = description.split('-')
+        const userId = description
+
+        //console.log("user id: ", userId)
+        const paymentLink = await userService.createPaymentLink(Number(amount), description, orderCode, userId);
         res.status(200).json(paymentLink);
     } catch (error) {
         console.log(error);
@@ -152,15 +156,15 @@ exports.updateAmout = async (req, res) => {
         // }
         const webhookData = paymentService.verifyWebhookData(req.body);
         console.log('Xác thực Webhook thành công:', webhookData);
+        const userId = req.body.data.description
+        const amount = req.body.data.amount
+        const result = await userService.updateAmount(userId, amount)
+        if (result) {
+            res.status(200).json({ message: "cap nhat thanh cong" });
+        } else {
+            res.status(400).json({ message: "loi he thong" });
+        }
         res.status(200).send('OK');
-        // const userId = req.body.data.description
-        // const amount = req.body.data.amount
-        // const result = await userService.updateAmount(userId, amount)
-        // if (result) {
-        //     res.status(200).json({ message: "cap nhat thanh cong" });
-        // } else {
-        //     res.status(400).json({ message: "loi he thong" });
-        // }
     } catch (error) {
         console.log(error)
         res.status(400).json({ error: "loi roi cac ban oi" })
