@@ -149,6 +149,8 @@ exports.updateAmout = async (req, res) => {
         // if (req.body.code !== '00') {
         //     return res.status(400).json({ message: "co van de" });
         // }
+        const webhookData = paymentService.verifyWebhookData(req.body);
+        console.log('Xác thực Webhook thành công:', webhookData);
         const userId = req.body.data.description
         const amount = req.body.data.amount
         const result = await userService.updateAmount(userId, amount)
