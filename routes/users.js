@@ -69,4 +69,14 @@ router.post('/reset-password', validateUser, async function (req, res, next) {
     next(error);
   }
 });
+// payment
+router.post('/payment-link'
+  // , validateUser
+  , async function (req, res, next) {
+    try {
+      await userController.createPaymentLink(req, res);
+    } catch (error) {
+      next(error);
+    }
+  });
 module.exports = router;

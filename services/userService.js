@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const otpUtils = require('../utils/optForgotPassWord');
 const emailService = require('./emailService');
-
+const paymentService = require('./paymentService');
 // admin
 const getallUsers = async () => {
     return await User.find({});
@@ -83,6 +83,11 @@ const resetPassword = async (otp, newPassword, date) => {
     await user.save();
     return { success: true };
 }
+// payment
+const createPaymentLink = async (amount, description, orderCode) => {
+    const paymentLink = await paymentService.createPaymentLink(amount, description, orderCode);
+    return paymentLink;
+}
 module.exports = {
     registerUser,
     loginUser,
@@ -90,5 +95,6 @@ module.exports = {
     fotgotPassword,
     resetPassword,
     blockUser,
-    unblockUser
+    unblockUser,
+    createPaymentLink
 };

@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema({
     otpForgotPasswordExpiry: {
         type: Date,
         default: null
+    },
+    amount: {
+        type: Number,
+        default: 0
     }
 }, { timestamps: true });
 //bam mat khau

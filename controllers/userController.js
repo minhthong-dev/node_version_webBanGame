@@ -133,3 +133,14 @@ exports.resetPassword = async (req, res) => {
         res.status(500).json({ message: "loi he thong" });
     }
 }
+exports.createPaymentLink = async (req, res) => {
+    try {
+        const orderCode = Date.now();
+        const { amount, description } = req.body;
+        const paymentLink = await userService.createPaymentLink(amount, description, orderCode);
+        res.status(200).json(paymentLink);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "loi he thong" });
+    }
+}
