@@ -110,5 +110,21 @@
       "userId": "699f1da743946eb8c351fcff"
     },
     "expiresAt": 1772039095657
+  },
+  "b5ee9529": {
+    "targetUrl": "http://localhost:3636/api/users/verify-email?token=0400c6b58ff5d42f0f95c301c1dfd9d9d3512b268abbc6833baa65fb826b8a19&shortId=b5ee9529",
+    "type": "verify_email",
+    "payload": {
+      "userId": "699fe2c751212d8a92ce6c0d"
+    },
+    "expiresAt": 1772089559192
+  },
+  "a2c127d0": {
+    "targetUrl": "http://localhost:3636/api/users/verify-email?token=14b00a272e38799ac99de27551d7555144548f37608575c16a34e52f699adea7&shortId=a2c127d0",
+    "type": "verify_email",
+    "payload": {
+      "userId": "699fec3d92d4bc7e6e416896"
+    },
+    "expiresAt": 1772091981396
   }
 }
