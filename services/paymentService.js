@@ -4,6 +4,6 @@ const createPaymentLink = async (amount, description, orderCode) => {
     return paymentLink;
 }
 const verifyWebhookData = (data) => {
-    return PayOS.verifyPaymentWebhookData(data);
+    return PayOS.verifyWebhook(data);
 };
 module.exports = { createPaymentLink, verifyWebhookData };

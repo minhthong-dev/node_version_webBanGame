@@ -18,4 +18,7 @@ const createPaymentLink = async (amount, description, orderCode) => {
     });
     return paymentLink;
 }
-module.exports = { payOS, createPaymentLink };
+const verifyWebhook = async (data) => {
+    return payOS.webhooks.verify(data);
+}
+module.exports = { payOS, createPaymentLink, verifyWebhook };
