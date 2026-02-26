@@ -13,7 +13,6 @@ var shortlinkRouter = require('./routes/shortlink');
 var cartRouter = require('./routes/cart');
 var discountRouter = require('./routes/discount');
 
-require('./jobs');
 
 var app = express();
 var dotenv = require('dotenv');
@@ -34,6 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // app.listen(3636, () => {
 //   console.log('Server is running on port 3636');
 // });
+require('./jobs');
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/games', gameRouter);
