@@ -146,9 +146,9 @@ exports.createPaymentLink = async (req, res) => {
 }
 exports.updateAmout = async (req, res) => {
     try {
-        if (req.body.code !== '00') {
-            return res.status(400).json({ message: "co van de" });
-        }
+        // if (req.body.code !== '00') {
+        //     return res.status(400).json({ message: "co van de" });
+        // }
         const userId = req.body.data.description
         const amount = req.body.data.amount
         const result = await userService.updateAmount(userId, amount)
