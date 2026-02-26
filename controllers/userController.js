@@ -2,6 +2,7 @@ const userService = require('../services/userService');
 const emailService = require('../services/emailService');
 const verifyToken = require('../utils/verifyToken');
 const User = require('../models/User');
+const paymentService = require('../services/paymentService');
 // admin
 exports.getAllUsers = async (req, res) => {
     try {
