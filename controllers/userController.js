@@ -154,8 +154,8 @@ exports.updateAmout = async (req, res) => {
         // if (req.body.code !== '00') {
         //     return res.status(400).json({ message: "co van de" });
         // }
-        const webhookData = paymentService.verifyWebhookData(req.body);
-        console.log('Xác thực Webhook thành công:', webhookData);
+        // const webhookData = paymentService.verifyWebhookData(req.body);
+        // console.log('Xác thực Webhook thành công:', webhookData);
         const userId = req.body.data.description
         const amount = req.body.data.amount
         const result = await userService.updateAmount(userId, amount)
@@ -164,7 +164,18 @@ exports.updateAmout = async (req, res) => {
         } else {
             res.status(400).json({ message: "loi he thong" });
         }
-        res.status(200).send('OK');
+        // res.status(200).send('OK');
+    } catch (error) {
+        console.log(error)
+        res.status(400).json({ error: "loi roi cac ban oi" })
+    }
+}
+exports.getAmount = async (req, res) => {
+    //console.log(req)
+    try {
+        const userId = req.params.userId;
+        const amount = await userService.getAmoutByid(userId);
+        res.status(200).json({ amount });
     } catch (error) {
         console.log(error)
         res.status(400).json({ error: "loi roi cac ban oi" })

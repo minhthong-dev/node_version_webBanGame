@@ -3,6 +3,7 @@ const otpUtils = require('../utils/optForgotPassWord');
 const emailService = require('./emailService');
 const paymentService = require('./paymentService');
 const historyService = require('./historyService');
+const socketApi = require('../config/socket');
 // admin
 const getallUsers = async () => {
     return await User.find({});
@@ -96,6 +97,13 @@ const createPaymentLink = async (amount, description, orderCode, userId) => {
     }
     return { error: "user khong ton tai" };
 }
+const getAmoutByid = async (userId) => {
+    const user = await User.findById(userId)
+    if (!user) {
+        return { error: "user khong ton tai" };
+    }
+    return user.amount;
+}
 const updateAmount = async (userId, amount) => {
     console.log(userId, amount)
     try {
@@ -106,6 +114,7 @@ const updateAmount = async (userId, amount) => {
         user.amount += amount
         await historyService.createHistory(userId, 'amount', amount, []);
         await user.save()
+        socketApi.io.emit('nap_tien_thanh_cong', 'update_amount');
     } catch (error) {
         console.log(error);
         return false;
@@ -121,5 +130,6 @@ module.exports = {
     blockUser,
     unblockUser,
     createPaymentLink,
-    updateAmount
+    updateAmount,
+    getAmoutByid
 };

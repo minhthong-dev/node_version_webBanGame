@@ -79,6 +79,13 @@ router.post('/payment-link'
       next(error);
     }
   });
+router.get('/amount/:userId', async function (req, res, next) {
+  try {
+    await userController.getAmount(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
 router.post('/webhook', async function (req, res, next) {
   try {
     await userController.updateAmout(req, res);
