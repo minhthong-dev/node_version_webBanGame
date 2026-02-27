@@ -13,6 +13,7 @@ var shortlinkRouter = require('./routes/shortlink');
 var cartRouter = require('./routes/cart');
 var discountRouter = require('./routes/discount');
 var historyRouter = require('./routes/history');
+var buyRouter = require('./routes/buy');
 
 
 var app = express();
@@ -43,6 +44,7 @@ app.use('/v', shortlinkRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/discount', discountRouter);
 app.use('/api/history', historyRouter);
+app.use('/api/buy', buyRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

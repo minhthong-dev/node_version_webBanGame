@@ -91,3 +91,63 @@ exports.sendForgotPasswordOTP = async (userEmail, otpCode) => {
         return false;
     }
 }
+exports.sendBuyGameSuccessEmail = async (userEmail, boughtGames) => {
+    try {
+        const gameRows = boughtGames.map((item, index) => `
+        <tr>
+            <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">${index + 1}</td>
+            <td style="padding: 12px; border-bottom: 1px solid #eee;"><strong>${item.name}</strong></td>
+            <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">
+                <code style="background: #fff5f5; color: #e74c3c; padding: 5px 10px; border-radius: 4px; font-weight: bold; border: 1px solid #ffc9c9; font-size: 16px;">
+                    ${item.key}
+                </code>
+            </td>
+        </tr>
+    `).join('');
+        await fetchFunc(`https://email-tan-ten.vercel.app/api/sendVerificationEmail`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                to: userEmail,
+                subject: `Xác nhận đơn hàng - ${boughtGames.length} Game đã được thanh toán`,
+                html: `
+                <div style="font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: auto; color: #333; border: 1px solid #e1e4e8; border-radius: 10px; overflow: hidden;">
+                    <div style="background: #2c3e50; padding: 25px; text-align: center;">
+                        <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Giao Dịch Thành Công!</h1>
+                    </div>
+                    
+                    <div style="padding: 30px;">
+                        <p>Chào bạn, cảm ơn bạn đã tin tưởng <strong>Web Bán Game Cho Người Nghèo</strong>. Dưới đây là danh sách mã kích hoạt (Key) các bản game bạn đã mua:</p>
+                        
+                        <table style="width: 100%; border-collapse: collapse; margin: 25px 0;">
+                            <thead>
+                                <tr style="background-color: #f8f9fa; color: #555;">
+                                    <th style="padding: 12px; border-bottom: 2px solid #dee2e6; width: 40px;">#</th>
+                                    <th style="padding: 12px; border-bottom: 2px solid #dee2e6; text-align: left;">Tên Game</th>
+                                    <th style="padding: 12px; border-bottom: 2px solid #dee2e6;">Mã Kích Hoạt</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${gameRows}
+                            </tbody>
+                        </table>
+
+                        <div style="background: #fff9db; padding: 15px; border-radius: 5px; border-left: 5px solid #fcc419; margin-top: 20px;">
+                            <p style="margin: 0; font-size: 13px; color: #856404;">
+                                <strong>Lưu ý:</strong> Nếu bạn mua nhiều bản của cùng một game, hãy sử dụng các mã key khác nhau cho mỗi tài khoản kích hoạt.
+                            </p>
+                        </div>
+                        
+                        <div style="margin-top: 40px; text-align: center; border-top: 1px solid #eee; padding-top: 20px;">
+                            <p style="color: #7f8c8d; font-size: 14px;">Chúc bạn có những giây phút chơi game vui vẻ!</p>
+                        </div>
+                    </div>
+                </div>
+            `
+            })
+        });
+        return true;
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+}
