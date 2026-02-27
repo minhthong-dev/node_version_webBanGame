@@ -4,7 +4,8 @@ const socketApi = require('../config/socket');
 const emailService = require('./emailService');
 const gameModel = require('../models/Game');
 const crypto = require('crypto');
-const buyGame = async (userId, amount, gameId) => {
+const buyGame = async (userId, amount, gameIds) => {
+
     const user = await userModel.findById(userId);
     if (!user) {
         return { error: "user khong ton tai" };
@@ -13,11 +14,11 @@ const buyGame = async (userId, amount, gameId) => {
         return { error: "so du khong du" };
     }
     user.amount -= amount;
-    await historyService.createHistory(userId, 'buying', amount, [gameId]);
+    await historyService.createHistory(userId, 'buying', amount, gameIds);
     await user.save();
     socketApi.io.to(userId).emit('buy_success', 'update_amount');
     const boughtGames = [];
-    for (const id of gameId) {
+    for (const id of gameIds) {
         const game = await gameModel.findById(id);
         if (game) {
             const gameKey = crypto.randomBytes(8).toString("hex").toUpperCase();
