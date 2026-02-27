@@ -114,7 +114,8 @@ const updateAmount = async (userId, amount) => {
         user.amount += amount
         await historyService.createHistory(userId, 'amount', amount, []);
         await user.save()
-        socketApi.io.emit('nap_tien_thanh_cong', 'update_amount');
+        console.log("room: ", socketApi.io.sockets.adapter.rooms);
+        socketApi.io.to(userId).emit('nap_tien_thanh_cong', 'update_amount');
     } catch (error) {
         console.log(error);
         return false;
