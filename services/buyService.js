@@ -3,6 +3,7 @@ const historyService = require('./historyService');
 const socketApi = require('../config/socket');
 const emailService = require('./emailService');
 const gameModel = require('../models/Game');
+const cartService = require('./cartService');
 const crypto = require('crypto');
 const buyGame = async (userId, amount, gameIds) => {
 
@@ -26,6 +27,7 @@ const buyGame = async (userId, amount, gameIds) => {
                 name: game.name,
                 key: gameKey
             });
+            await cartService.removeFromCart(userId, id);
         }
     }
     if (boughtGames.length > 0) {

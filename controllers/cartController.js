@@ -5,6 +5,9 @@ const addToCart = async (req, res) => {
     try {
         const { userId, gameId } = req.body;
         const cart = await cartService.addToCart(userId, gameId);
+        if (cart.error === "Game đã có trong giỏ hàng") {
+            return res.status(400).json({ message: "Game đã có trong giỏ hàng" })
+        }
         res.status(200).json(cart);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -35,10 +38,10 @@ const isGameInCart = async (req, res) => {
         const gameId = req.params.gameId;
         const a = await cartService.isGameInCart(userId, gameId)
         if (a) {
-            return res.status(200).json(true)
+            return res.status(400).json(true)
         }
-        return res.sattus(200).json(fales)
-    } catch (error) { res.sattus(500).json({ error: 'loi roi' }) }
+        return res.status(200).json(false)
+    } catch (error) { res.status(500).json({ error: 'loi roi' }) }
 }
 module.exports = {
     addToCart,

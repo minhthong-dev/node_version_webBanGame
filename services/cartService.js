@@ -6,14 +6,12 @@ const addToCart = async (userId, gameId) => {
     try {
         const userExitInCart = await cartModel.findOne({ userId });
         if (userExitInCart) {
+            const gameExitInCart = await userExitInCart.games.includes(gameId);
+            console.log('gameExitInCart: ', gameExitInCart);
+            if (gameExitInCart) {
+                return ({ error: "Game đã có trong giỏ hàng" })
+            }
             await cartModel.updateOne({ userId: userId }, { $push: { games: gameId } })
-            return;
-        }
-        const gameExitInCart = await cartModel.findOne({ userId: userId, games: gameId });
-        console.log('gameExitInCart: ', gameExitInCart);
-        if (gameExitInCart) {
-            throw new Error('Game đã có trong giỏ hàng');
-            return;
         }
         const game = await gameModel.findById(gameId);
         if (!game) {
@@ -26,6 +24,7 @@ const addToCart = async (userId, gameId) => {
         const cart = await cartModel.create({ userId: user._id, games: game._id });
         await cart.save();
         return cart;
+
     } catch (error) {
         console.error('Error adding to cart:', error);
         throw new Error('loi khi them game vao gio hang');
@@ -59,9 +58,10 @@ const removeFromCart = async (userId, gameId) => {
 }
 const isGameInCart = async (userId, gameId) => {
     try {
-        const cart = await cartModel.findOne({ userId, gameId });
+        const cart = await cartModel.findOne({ userId });
         if (cart) {
-            return true;
+            const gameExitInCart = await cart.games.includes(gameId);
+            return gameExitInCart;
         }
         return false;
     } catch (error) {

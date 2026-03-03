@@ -11,6 +11,6 @@ router.delete('/:userId/:gameId', cartController.removeFromCart);
 
 router.post('/add', cartController.addToCart);
 
-router.get('/incart/:userId/:gaemId', cartController.isGameInCart)
+router.get('/incart/:userId/:gameId', cartController.isGameInCart)
 
 module.exports = router;
