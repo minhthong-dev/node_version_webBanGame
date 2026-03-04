@@ -43,6 +43,9 @@ const loginUser = async (loginKey, password) => {
     if (user.isBlock) {
         return { error: "user bi khoa" };
     }
+    if (user.isVerified === null) {
+        return { error: "user chua xac thuc email" };
+    }
     const token = require('jsonwebtoken').sign({ id: user._id, role: user.role, username: user.username, email: user.email, amount: user.amount }, process.env.JWT_SECRET, { expiresIn: '1h' });
     return { ...user._doc, token };
 }

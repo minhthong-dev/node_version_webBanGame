@@ -79,6 +79,9 @@ exports.login = async (req, res) => {
             if (user.error === 'user khong ton tai') {
                 res.status(404).json({ message: 'user khong ton tai' });
             }
+            if (user.error === 'user chua xac thuc email') {
+                res.status(401).json({ message: 'user chua xac thuc email' });
+            }
             res.status(401).json({ message: 'Invalid credentials' });
         }
     } catch (error) {
