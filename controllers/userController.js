@@ -88,6 +88,29 @@ exports.login = async (req, res) => {
         res.status(500).json({ message: "loi he thong" });
     }
 }
+exports.oauthCallBack = async (req, res) => {
+    try {
+        const user = await userService.oauthCallBack(req.user);
+        if (user && user.token) {
+            const frontendUrl = process.env.FRONTEND_URL;
+            res.redirect(`${frontendUrl}/auth-success?token=${user.token}`);
+        } else {
+            console.log("user: ", user);
+            if (user.error === 'user bi khoa') {
+                res.status(403).json({ message: 'user bi khoa' });
+            }
+            if (user.error === 'user khong ton tai') {
+                res.status(404).json({ message: 'user khong ton tai' });
+            }
+            if (user.error === 'user chua xac thuc email') {
+                res.status(401).json({ message: 'user chua xac thuc email' });
+            }
+            res.status(401).json({ message: 'Invalid credentials' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: "loi he thong" });
+    }
+}
 // exports.sendVerifyEmail = async (req, res) => {
 //     try {
 //         const { token, shortId } = req.query;

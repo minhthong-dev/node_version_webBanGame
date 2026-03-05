@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('./config/cors');
+const passport = require('passport');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -15,6 +16,8 @@ var discountRouter = require('./routes/discount');
 var historyRouter = require('./routes/history');
 var buyRouter = require('./routes/buy');
 
+const session = require('express-session');
+require('./config/OauthConfig');
 
 var app = express();
 var dotenv = require('dotenv');
@@ -26,11 +29,18 @@ connectDB();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.use(cors);
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 // app.listen(3636, () => {
 //   console.log('Server is running on port 3636');

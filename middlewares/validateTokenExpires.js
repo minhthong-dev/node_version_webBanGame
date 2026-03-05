@@ -13,10 +13,10 @@ const validateTokenExpires = async (req, res, next) => {
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
-        // if (user.iat + 3600 * 1000 < Date.now()) {
-        //     console.log("thoi gian cua token: ", user.iat + 3600 * 1000);
-        //     return res.status(401).json({ error: 'Token expired' });
-        // }
+        if (user.iat + 3600 * 1000 < Date.now()) {
+            console.log("thoi gian cua token: ", user.iat + 3600 * 1000);
+            return res.status(401).json({ error: 'Token expired' });
+        }
         req.user = user;
         next();
     } catch (error) {

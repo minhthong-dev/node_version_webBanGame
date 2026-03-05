@@ -49,6 +49,23 @@ const loginUser = async (loginKey, password) => {
     const token = require('jsonwebtoken').sign({ id: user._id, role: user.role, username: user.username, email: user.email, amount: user.amount }, process.env.JWT_SECRET, { expiresIn: '1h' });
     return { ...user._doc, token };
 }
+const oauthCallBack = async (passportUser) => {
+    if (!passportUser || (!passportUser.id && !passportUser._id)) {
+        return { error: "user khong ton tai" };
+    }
+    const user = await User.findById(passportUser.id || passportUser._id);
+    if (!user) {
+        return { error: "user khong ton tai" };
+    }
+    if (user.isBlock) {
+        return { error: "user bi khoa" };
+    }
+    if (user.isVerified === null) {
+        return { error: "user chua xac thuc email" };
+    }
+    const token = require('jsonwebtoken').sign({ id: user._id, role: user.role, username: user.username, email: user.email, amount: user.amount }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    return { ...user._doc, token };
+}
 // forgot password
 const fotgotPassword = async (email, username) => {
     const user = await User.findOne({ email, username });
@@ -135,5 +152,6 @@ module.exports = {
     unblockUser,
     createPaymentLink,
     updateAmount,
-    getAmoutByid
+    getAmoutByid,
+    oauthCallBack
 };

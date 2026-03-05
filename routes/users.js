@@ -4,6 +4,7 @@ const userController = require('../controllers/userController');
 const validateUser = require('../middlewares/validateUser');
 const validateAdmin = require('../middlewares/validateAdmin');
 const validateSuperAdmin = require('../middlewares/validateSuperAdmin');
+const passport = require('passport');
 /* GET users listing. */
 router.get('/', function (req, res, next) {
   res.send('respond with a resource');
@@ -46,6 +47,9 @@ router.post('/login', validateUser, async function (req, res, next) {
     next(error);
   }
 });
+// oauth
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), userController.oauthCallBack);
 // xac nhan email
 router.get('/verify-email', async function (req, res, next) {
   try {
