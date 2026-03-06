@@ -17,7 +17,7 @@ var historyRouter = require('./routes/history');
 var buyRouter = require('./routes/buy');
 
 const session = require('express-session');
-require('./config/OauthConfig');
+require('./config/oauthConfig');
 
 var app = express();
 var dotenv = require('dotenv');
