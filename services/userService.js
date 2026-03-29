@@ -4,6 +4,7 @@ const emailService = require('./emailService');
 const paymentService = require('./paymentService');
 const historyService = require('./historyService');
 const socketApi = require('../config/socket');
+const historyChatService = require('./historyChatService');
 // admin
 const getallUsers = async () => {
     return await User.find({});
@@ -26,9 +27,16 @@ const unblockUser = async (res, req) => {
     await user.save();
     return { success: true };
 }
+const getAdminList = async () => {
+    const adminList = await User.find({
+        role: { $in: ['admin', 'super_admin'] }
+    });
+    return adminList;
+}
 // auth
 const registerUser = async (userData) => {
     const user = new User(userData);
+    await historyChatService.createChat(user._id);
     return await user.save();
 }
 const loginUser = async (loginKey, password) => {
@@ -153,5 +161,6 @@ module.exports = {
     createPaymentLink,
     updateAmount,
     getAmoutByid,
-    oauthCallBack
+    oauthCallBack,
+    getAdminList
 };
