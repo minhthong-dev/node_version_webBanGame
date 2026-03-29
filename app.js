@@ -15,7 +15,7 @@ var cartRouter = require('./routes/cart');
 var discountRouter = require('./routes/discount');
 var historyRouter = require('./routes/history');
 var buyRouter = require('./routes/buy');
-var historyChatRouter = require('./routes/historyChat');
+var historyChatRouter = require('./routes/historychat');
 const session = require('express-session');
 require('./config/oauthConfig');
 
