@@ -34,6 +34,7 @@ const createChat = async (userId) => {
 }
 const addMessUser = async (chatData) => {
     try {
+        console.log("addMessUser", chatData.message);
         const userId = chatData.data.infor.userId;
         const content = chatData.message;
         const timestamp = Date.now();
@@ -42,6 +43,7 @@ const addMessUser = async (chatData) => {
             await createChat(userId);
 
             historychat.messages.push({ sender: 'user', content, timestamp });
+            await historychat.save();
             return historychat;
         }
         historychat.messages.push({ sender: 'user', content, timestamp });
@@ -54,6 +56,7 @@ const addMessUser = async (chatData) => {
 }
 const addMessAdmin = async (chatData) => {
     try {
+        console.log("addMessAdmin", chatData);
         const userId = chatData.room;
         const content = chatData.text;
         const timestamp = Date.now();
