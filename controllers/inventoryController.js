@@ -22,4 +22,15 @@ const addStock = async (req, res) => {
     }
 };
 
-module.exports = { addStock };
+const getStock = async (req, res) => {
+    try {
+        const { gameId } = req.params;
+        const inventory = await Inventory.findOne({ gameId });
+        if (!inventory) return res.status(404).json({ error: 'Không tìm thấy inventory' });
+        return res.status(200).json(inventory);
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+};
+
+module.exports = { addStock, getStock };
