@@ -126,5 +126,37 @@
       "userId": "699fec3d92d4bc7e6e416896"
     },
     "expiresAt": 1772091981396
+  },
+  "0baa0ecf": {
+    "targetUrl": "undefined/api/users/verify-email?token=f9ef4876920f1c9be25d76da406ca815cc39b8bf0831a13f114f973d5cfca558&shortId=0baa0ecf",
+    "type": "verify_email",
+    "payload": {
+      "userId": "69c93526ceab245994eb73b9"
+    },
+    "expiresAt": 1774797623133
+  },
+  "4c7700c6": {
+    "targetUrl": "undefined/api/users/verify-email?token=27756853ff42a41f97cc168dd89c40de4028b0cf8dee80a570880b384c1a736f&shortId=4c7700c6",
+    "type": "verify_email",
+    "payload": {
+      "userId": "69c937e9ceab245994eb73e5"
+    },
+    "expiresAt": 1774798329574
+  },
+  "242442ee": {
+    "targetUrl": "undefined/api/users/verify-email?token=a828123746d30077430fd89fadb192042a4fcb8ec25099d7ebff1e7b01ce008e&shortId=242442ee",
+    "type": "verify_email",
+    "payload": {
+      "userId": "69cb96a2661b62527e02e182"
+    },
+    "expiresAt": 1774953650290
+  },
+  "155ba381": {
+    "targetUrl": "undefined/api/users/verify-email?token=d716e3f3a2b220ed8dc5eaacebf5bc7b540900ad83072a8abcf828abd0abaf25&shortId=155ba381",
+    "type": "verify_email",
+    "payload": {
+      "userId": "69cb96f1661b62527e02e18e"
+    },
+    "expiresAt": 1774953729416
   }
 }
