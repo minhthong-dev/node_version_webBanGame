@@ -1,5 +1,5 @@
 const cors = require('cors');
-const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174', 'https://adminwebbangame.vercel.app'];
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174', 'https://your-production-domain.com'];
 const corsOptions = {
     origin: function (origin, callback) {
         if (!origin || allowedOrigins.indexOf(origin) !== -1) {
