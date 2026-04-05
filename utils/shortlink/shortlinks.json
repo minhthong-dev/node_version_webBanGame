@@ -158,5 +158,13 @@
       "userId": "69cb96f1661b62527e02e18e"
     },
     "expiresAt": 1774953729416
+  },
+  "7e21dc52": {
+    "targetUrl": "https://node-version-webbangame.onrender.com/api/users/verify-email?token=c0b2e1165182f98674a88ea43927adb886d0f1167337ecf08df659a007d6b46f&shortId=7e21dc52",
+    "type": "verify_email",
+    "payload": {
+      "userId": "69d1ccbb85a232337494efb3"
+    },
+    "expiresAt": 1775360716326
   }
 }

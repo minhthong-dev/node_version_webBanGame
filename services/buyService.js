@@ -24,18 +24,40 @@ const buyGame = async (userId) => {
             const cart = await cartModel.findOne({ userId }).session(session);
             if (!cart || cart.products.length === 0) throw new Error('cart_empty');
 
+            const lines = [];
             for (const item of cart.products) {
                 const { product: gameId, quantity } = item;
+                const qty = Number(quantity);
+                if (!Number.isFinite(qty) || qty < 1) throw new Error(`game_not_found:${gameId}`);
 
                 const game = await gameModel.findById(gameId).session(session);
                 if (!game) throw new Error(`game_not_found:${gameId}`);
 
-                const lineTotal = game.price * quantity;
-                totalAmount += lineTotal;
+                const inv = await inventoryModel.findOne({ gameId }).session(session);
+                if (!inv || inv.stock < qty) {
+                    throw new Error(`out_of_stock:${game.name}`);
+                }
 
+                const price = Number(game.price);
+                const lineTotal = (Number.isFinite(price) ? price : 0) * qty;
+                totalAmount += lineTotal;
+                lines.push({ gameId, qty, game, lineTotal });
+            }
+
+            const balance = Number(user.amount);
+            const safeBalance = Number.isFinite(balance) ? balance : 0;
+            if (safeBalance < totalAmount) {
+                const err = new Error('not_enough_money');
+                err.balance = safeBalance;
+                err.totalRequired = totalAmount;
+                throw err;
+            }
+
+            for (const line of lines) {
+                const { gameId, qty, game } = line;
                 const inventory = await inventoryModel.findOneAndUpdate(
-                    { gameId, $expr: { $gte: ['$stock', quantity] } },
-                    { $inc: { stock: -quantity } },
+                    { gameId, $expr: { $gte: ['$stock', qty] } },
+                    { $inc: { stock: -qty } },
                     { session, new: true }
                 );
                 if (!inventory) throw new Error(`out_of_stock:${game.name}`);
@@ -45,8 +67,7 @@ const buyGame = async (userId) => {
                 purchasedGameIds.push(gameId);
             }
 
-            if (user.amount < totalAmount) throw new Error('not_enough_money');
-            user.amount -= totalAmount;
+            user.amount = safeBalance - totalAmount;
             await user.save({ session });
 
             await historyService.createHistory(userId, 'buying', totalAmount, purchasedGameIds);
@@ -58,7 +79,13 @@ const buyGame = async (userId) => {
         const msg = error.message;
         if (msg === 'user_not_found') return { error: 'User không tồn tại' };
         if (msg === 'cart_empty') return { error: 'Giỏ hàng trống' };
-        if (msg === 'not_enough_money') return { error: 'Số dư không đủ để thanh toán' };
+        if (msg === 'not_enough_money') {
+            return {
+                error: 'Số dư không đủ để thanh toán',
+                balance: error.balance,
+                totalRequired: error.totalRequired
+            };
+        }
         if (msg.startsWith('out_of_stock:')) return { error: `Hết hàng: ${msg.split(':')[1]}` };
         if (msg.startsWith('game_not_found:')) return { error: `Game không tồn tại` };
         return { error: 'Lỗi hệ thống, vui lòng thử lại' };

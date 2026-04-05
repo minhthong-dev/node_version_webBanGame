@@ -1,23 +1,59 @@
 const Inventory = require('../models/Inventory');
 const User = require('../models/User');
+const Game = require('../models/Game');
 
 // POST /api/inventory/add-stock - Tao hoac cap nhat ton kho (Dung cho test Postman)
+// stock: so nguyen >= 0 (0 hop le cho pre-order / het hang)
+// mode: "increment" (mac dinh) = cong them; "set" = dat tuyet doi ton kho
 const addStock = async (req, res) => {
     try {
-        const { gameId, stock } = req.body;
-        if (!gameId || typeof stock !== 'number') {
-            return res.status(400).json({ error: 'gameId và stock là bắt buộc' });
+        const { gameId, quantity, mode = 'increment' } = req.body;
+
+        const qty = Number(quantity);
+        if (!gameId || !Number.isFinite(qty) || !Number.isInteger(qty) || qty < 0) {
+            return res.status(400).json({
+                error: 'gameId là bắt buộc; stock phải là số nguyên >= 0 (0 được phép cho pre-order)'
+            });
         }
-        
-        // Them moi hoac cap nhat stock
-        const inventory = await Inventory.findOneAndUpdate(
-            { gameId },
-            { $set: { stock } },
-            { new: true, upsert: true }
-        );
-        
-        return res.status(200).json({ success: true, inventory });
+
+        if (mode !== 'increment' && mode !== 'set') {
+            return res.status(400).json({ error: 'mode phải là "increment" hoặc "set"' });
+        }
+
+        // 2. Kiểm tra Game có tồn tại không
+        const existingGame = await Game.findById(gameId);
+        if (!existingGame) {
+            return res.status(404).json({ error: 'Game không tồn tại. Không thể thêm kho.' });
+        }
+
+        const update =
+            mode === 'set'
+                ? { $set: { stock: qty } }
+                : { $inc: { stock: qty } };
+
+        const inventory = await Inventory.findOneAndUpdate({ gameId }, update, {
+            new: true,
+            upsert: true,
+            setDefaultsOnInsert: true
+        });
+
+        const message =
+            mode === 'set'
+                ? `Đã đặt tồn kho = ${qty} cho game`
+                : qty === 0
+                  ? 'Không thay đổi số lượng (cộng 0); tồn kho hiện tại giữ nguyên'
+                  : `Đã thêm ${qty} sản phẩm vào kho cho game`;
+
+        return res.status(200).json({
+            success: true,
+            message,
+            totalStock: inventory.stock,
+            mode
+        });
     } catch (err) {
+        if (err.kind === 'ObjectId') {
+            return res.status(400).json({ error: 'ID Game không đúng định dạng' });
+        }
         return res.status(500).json({ error: err.message });
     }
 };

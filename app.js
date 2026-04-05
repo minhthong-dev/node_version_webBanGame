@@ -17,6 +17,7 @@ var historyRouter = require('./routes/history');
 var buyRouter = require('./routes/buy');
 var historyChatRouter = require('./routes/historychat');
 var inventoryRouter = require('./routes/inventory');
+var preOrderRouter = require('./routes/preorder');
 const session = require('express-session');
 require('./config/oauthConfig');
 
@@ -58,6 +59,7 @@ app.use('/api/history', historyRouter);
 app.use('/api/buy', buyRouter);
 app.use('/api/historychat', historyChatRouter);
 app.use('/api/inventory', inventoryRouter);
+app.use('/api/preorder', preOrderRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

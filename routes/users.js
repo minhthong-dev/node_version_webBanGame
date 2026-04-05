@@ -31,7 +31,24 @@ router.patch('/unblock/:id', validateSuperAdmin, async function (req, res, next)
     next(error);
   }
 });
-// auth
+// auth — GET hints (browser/Postman GET otherwise hits 404 with HTML)
+router.get('/register', function (req, res) {
+  res.status(405).json({
+    error: 'Phương thức không đúng: cần POST, không phải GET',
+    method: 'POST',
+    url: '/api/users/register',
+    body: { username: 'string', email: 'string', password: 'string' }
+  });
+});
+router.get('/login', function (req, res) {
+  res.status(405).json({
+    error: 'Phương thức không đúng: cần POST, không phải GET',
+    method: 'POST',
+    url: '/api/users/login',
+    body: { loginKey: 'email hoặc username', password: 'string' }
+  });
+});
+
 router.post('/register', validateUser, async function (req, res, next) {
   try {
     await userController.register(req, res);
