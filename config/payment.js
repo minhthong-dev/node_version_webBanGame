@@ -9,12 +9,13 @@ const payOS = new PayOS({
     checksumKey: process.env.BANK_CHEKSUM_KEY,
 });
 const createPaymentLink = async (amount, description, orderCode) => {
+    const url = process.env.BACKEND_URL;
     const paymentLink = await payOS.paymentRequests.create({
         amount: amount,
         description: description,
         orderCode: orderCode,
-        returnUrl: 'http://localhost:3000/success',
-        cancelUrl: 'http://localhost:3000/cancel',
+        returnUrl: `${url}/payos/success`,
+        cancelUrl: `${url}/payos/cancel`,
     });
     return paymentLink;
 }

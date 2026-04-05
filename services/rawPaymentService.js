@@ -19,10 +19,10 @@ const getRawPaymentByOrderCode = async (orderCode) => {
     }
 };
 
-const updateRawPaymentStatus = async (orderCode, status) => {
+const updateRawPaymentStatus = async (paymentLinkId, status) => {
     try {
         return await RawPayment.findOneAndUpdate(
-            { orderCode },
+            { paymentLinkId },
             { status },
             { new: true }
         );
