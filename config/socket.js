@@ -8,6 +8,7 @@ const io = new Server({
         credentials: true
     }
 });
+const historyChatService = require('../services/historyChatService');
 const socketApi = {
     io: io
 };
@@ -52,13 +53,20 @@ io.on('connection', (socket) => {
             room: data.room,
             data: data
         });
+        onlineUser.set(socket.id, data);
     });
     socket.on('send_message', (data) => {
+        try {
+            historyChatService.addMessUser(data);
+        } catch (error) {
+            return error;
+        }
         console.log("send_message: ", data);
         // socket.to(data.room).emit('receive_message', data);
         socket.to('admin_room').emit('receive_user_message', data);
     });
     socket.on('admin_message', (data) => {
+        historyChatService.addMessAdmin(data);
         console.log("admin_message: ", data);
         socket.to(data.room).emit('receive_admin_message', data);
     })
@@ -72,12 +80,16 @@ io.on('connection', (socket) => {
     socket.on('user_block', (data) => {
         console.log("user_block: ", data);
         let targetId = null;
-        for (const [key, value] of onlineUser) {
-            console.log("value: ", value.data);
-            // console.log("key: ", key);
-            if (value.data.userId === data.id) {
-                targetId = key;
+        try {
+            for (const [key, value] of onlineUser) {
+                console.log("value: ", value.data);
+                // console.log("key: ", key);
+                if (value.data.userId === data.id) {
+                    targetId = key;
+                }
             }
+        } catch (error) {
+            console.log(error);
         }
         console.log("targetId: ", targetId);
         if (targetId) {
