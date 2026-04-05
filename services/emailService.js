@@ -151,3 +151,46 @@ exports.sendBuyGameSuccessEmail = async (userEmail, boughtGames) => {
         res.status(500).json({ error: err.message });
     }
 }
+exports.sendUpdatePassEmail = async (userEmail, otpCode) => {
+    try {
+        await fetchFunc(`https://email-tan-ten.vercel.app/api/sendVerificationEmail`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                to: userEmail,
+                subject: `OTP YÊU CẦU CẬP NHẬT MẬT KHẨU`,
+                html: `
+                <div style="font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: auto; color: #333; border: 1px solid #e1e4e8; border-radius: 10px; overflow: hidden;">
+    <div style="background: #2c3e50; padding: 25px; text-align: center;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Xác Nhận Thay Đổi Mật Khẩu</h1>
+    </div>
+    
+    <div style="padding: 30px;">
+        <p>Chào bạn,</p>
+        <p>Chúng tôi nhận được yêu cầu thiết lập lại mật khẩu cho tài khoản của bạn tại <strong>Web Bán Game Cho Người Nghèo</strong>. Vui lòng sử dụng mã xác thực (OTP) dưới đây để hoàn tất quá trình:</p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <div style="display: inline-block; background: #f8f9fa; border: 2px dashed #2c3e50; padding: 15px 40px; font-size: 32px; font-weight: bold; letter-spacing: 10px; color: #e67e22; border-radius: 8px;">
+                ${otpCode}
+            </div>
+            <p style="font-size: 13px; color: #7f8c8d; margin-top: 10px;">Mã này có hiệu lực trong vòng 15 phút.</p>
+        </div>
+
+        <div style="background: #fff5f5; padding: 15px; border-radius: 5px; border-left: 5px solid #ff6b6b; margin-top: 20px;">
+            <p style="margin: 0; font-size: 13px; color: #c92a2a;">
+                <strong>Cảnh báo bảo mật:</strong> Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này hoặc liên hệ hỗ trợ ngay lập tức để bảo vệ tài khoản. <strong>Tuyệt đối không chia sẻ mã này với bất kỳ ai.</strong>
+            </p>
+        </div>
+        
+        <div style="margin-top: 40px; text-align: center; border-top: 1px solid #eee; padding-top: 20px;">
+            <p style="color: #7f8c8d; font-size: 14px;">Hệ thống hỗ trợ game thủ vượt khó!</p>
+        </div>
+    </div>
+</div>
+            `
+            })
+        });
+    } catch (error) {
+        return false;
+    }
+}

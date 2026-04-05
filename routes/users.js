@@ -97,4 +97,19 @@ router.post('/webhook', async function (req, res, next) {
     next(error);
   }
 });
+// reset mat khau
+router.patch('/update-pass', async function (req, res, next) {
+  try {
+    await userController.updatePass(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+router.get('/update-pass-request', validateUser, async function (req, res, next) {
+  try {
+    await userController.updatePassRequest(req.userId, res);
+  } catch (error) {
+    next(error);
+  }
+});
 module.exports = router;
