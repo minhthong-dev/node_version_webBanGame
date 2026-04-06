@@ -43,7 +43,8 @@ exports.sendEmailVerification = async (userId, email, verifyToken) => {
 
         return { shortUrl };
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error('sendEmailVerification:', err);
+        throw err;
     }
 }
 exports.verifyEmail = async (token, shortId, res) => {
