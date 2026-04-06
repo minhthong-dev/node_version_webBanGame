@@ -16,6 +16,7 @@ var discountRouter = require('./routes/discount');
 var historyRouter = require('./routes/history');
 var buyRouter = require('./routes/buy');
 var historyChatRouter = require('./routes/historychat');
+var walletRouter = require('./routes/wallet');
 var inventoryRouter = require('./routes/inventory');
 var preOrderRouter = require('./routes/preorder');
 var payOsRouter = require('./routes/payos')
@@ -59,6 +60,7 @@ app.use('/api/discount', discountRouter);
 app.use('/api/history', historyRouter);
 app.use('/api/buy', buyRouter);
 app.use('/api/historychat', historyChatRouter);
+app.use('/api/wallets', walletRouter);
 app.use('/api/inventory', inventoryRouter);
 app.use('/api/preorder', preOrderRouter);
 app.use('/api/payos', payOsRouter)
