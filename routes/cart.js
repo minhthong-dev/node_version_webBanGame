@@ -1,16 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const cartController = require('../controllers/cartController');
+const validateTokenExpires = require('../middlewares/validateTokenExpires');
 
-router.get('/hello', (req, res) => {
-    return res.status(200).json({ message: 'concac' });
-});
-router.get('/:userId', cartController.getCartByUserId);
+router.get('/', validateTokenExpires, cartController.getCartByUserId);
 
-router.delete('/:userId/:gameId', cartController.removeFromCart);
+router.post('/add', validateTokenExpires, cartController.addToCart);
 
-router.post('/add', cartController.addToCart);
+router.post('/remove', validateTokenExpires, cartController.removeFromCart);
 
-router.get('/incart/:userId/:gameId', cartController.isGameInCart)
+router.get('/incart/:product', validateTokenExpires, cartController.isGameInCart);
+
+router.delete('/:userId/:gameId', cartController.removeFromCartLegacy);
 
 module.exports = router;

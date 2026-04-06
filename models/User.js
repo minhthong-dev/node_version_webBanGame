@@ -33,6 +33,14 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: null
     },
+    otpChangePass: {
+        type: String,
+        default: null
+    },
+    otpChangePassExpiry: {
+        type: Date,
+        default: null
+    },
     amount: {
         type: Number,
         default: 0
@@ -42,6 +50,7 @@ const userSchema = new mongoose.Schema({
 userSchema.pre('save', async function () {
     try {
         if (this.isModified('password')) {
+            console.log("mat khau: ", this.password)
             const salt = await bycrypt.genSalt(10);
             this.password = await bycrypt.hash(this.password, salt);
         }
