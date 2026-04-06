@@ -11,4 +11,17 @@ const createPaymentLink = async (amount, description, orderCode) => {
 const verifyWebhookData = (data) => {
     return PayOS.verifyWebhook(data);
 };
-module.exports = { createPaymentLink, verifyWebhookData };
+
+const cancelPayment = async (paymentLinkId, orderCode) => {
+    const paymentLink = await PayOS.cancelPayment(orderCode);
+    try {
+        if (paymentLink) {
+            await rawPaymentService.updateRawPaymentStatus(paymentLinkId, 'CANCEL');
+        }
+        return paymentLink;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+module.exports = { createPaymentLink, verifyWebhookData, cancelPayment };

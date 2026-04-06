@@ -10,9 +10,18 @@ const createRawPayment = async (paymentData) => {
     }
 };
 
-const getRawPaymentByOrderCode = async (orderCode) => {
+const getRawPaymentByOrderCode = async (paymentLinkId) => {
     try {
-        return await RawPayment.findOne({ orderCode });
+        return await RawPayment.findOne({ paymentLinkId });
+    } catch (error) {
+        console.error("Lỗi khi tìm RawPayment:", error);
+        return null;
+    }
+};
+
+const getAllRawPayment = async () => {
+    try {
+        return await RawPayment.find().populate('description');
     } catch (error) {
         console.error("Lỗi khi tìm RawPayment:", error);
         return null;
@@ -35,5 +44,6 @@ const updateRawPaymentStatus = async (paymentLinkId, status) => {
 module.exports = {
     createRawPayment,
     getRawPaymentByOrderCode,
-    updateRawPaymentStatus
+    updateRawPaymentStatus,
+    getAllRawPayment
 };

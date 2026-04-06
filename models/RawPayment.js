@@ -5,7 +5,11 @@ const rawPaymentSchema = new mongoose.Schema({
     accountNumber: String,
     accountName: String,
     amount: Number,
-    description: String,
+    description: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     orderCode: { type: Number, unique: true },
     currency: String,
     paymentLinkId: String,
