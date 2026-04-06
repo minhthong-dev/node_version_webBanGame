@@ -207,3 +207,33 @@ exports.getAmount = async (req, res) => {
         res.status(400).json({ error: "loi roi cac ban oi" })
     }
 }
+exports.updatePassRequest = async (userId, res) => {
+    try {
+        const result = await userService.updatePassRequest(userId);
+        if (result) {
+            res.status(200).json({ message: "da gui yeu cau cap nhat mat khau, vui long check email" });
+        } else {
+            res.status(400).json({ message: "loi he thong" });
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(400).json({ error: "loi roi cac ban oi" })
+    }
+}
+exports.updatePass = async (req, res) => {
+    try {
+        const { otp, newPassword } = req.body;
+        const result = await userService.updatePass(otp, newPassword);
+        if (result.error) {
+            res.status(400).json({ message: result.error });
+        }
+        if (result) {
+            res.status(200).json({ message: "cap nhat mat khau thanh cong" });
+        } else {
+            res.status(400).json({ message: "loi he thong" });
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(400).json({ error: "loi roi cac ban oi" })
+    }
+}

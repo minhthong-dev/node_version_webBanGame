@@ -18,16 +18,22 @@ const payOS = {
 }
 
 const createPaymentLink = async (amount, description, orderCode) => {
+    const url = process.env.BACKEND_URL;
     const paymentLink = await payOS.paymentRequests.create({
         amount: amount,
         description: description,
         orderCode: orderCode,
-        returnUrl: 'http://localhost:3000/success',
-        cancelUrl: 'http://localhost:3000/cancel',
+        returnUrl: `${url}/api/payos/success`,
+        cancelUrl: `${url}/api/payos/cancel`,
     });
+    return paymentLink;
+}
+
+const cancelPayment = async (orderCode) => {
+    const paymentLink = await payOS.paymentRequests.cancel(orderCode, "hết hạn roi,hehee con chos");
     return paymentLink;
 }
 const verifyWebhook = async (data) => {
     return payOS.webhooks.verify(data);
 }
-module.exports = { payOS, createPaymentLink, verifyWebhook };
+module.exports = { payOS, createPaymentLink, verifyWebhook, cancelPayment };
