@@ -1,51 +1,64 @@
 const cartService = require('../services/cartService');
-// const { Op } = require('sequelize');
 
 const addToCart = async (req, res) => {
     try {
-        const { userId, gameId } = req.body;
-        const cart = await cartService.addToCart(userId, gameId);
-        if (cart.error === "Game đã có trong giỏ hàng") {
-            return res.status(400).json({ message: "Game đã có trong giỏ hàng" })
-        }
+        const { product, quantity } = req.body;
+        const userId = req.user._id;
+        const cart = await cartService.addToCart(userId, product, quantity);
+        if (cart.error) return res.status(cart.statusCode || 400).json({ error: cart.error });
         res.status(200).json(cart);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
+};
+
 const getCartByUserId = async (req, res) => {
     try {
-        const { userId } = req.params;
+        const userId = req.user._id;
         const cart = await cartService.getCartByUserId(userId);
         res.status(200).json(cart);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
+};
+
 const removeFromCart = async (req, res) => {
     try {
-        const userId = req.params.userId;
-        const gameId = req.params.gameId;
-        const cart = await cartService.removeFromCart(userId, gameId);
+        const userId = req.user._id;
+        const { product, quantity } = req.body;
+        const cart = await cartService.removeFromCart(userId, product, quantity);
+        if (cart.error) return res.status(cart.statusCode || 400).json({ error: cart.error });
         res.status(200).json(cart);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
+};
+
 const isGameInCart = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { product } = req.params;
+        const exists = await cartService.isGameInCart(userId, product);
+        return res.status(200).json(exists);
+    } catch (error) { res.status(500).json({ error: 'loi roi' }); }
+};
+
+const removeFromCartLegacy = async (req, res) => {
     try {
         const userId = req.params.userId;
         const gameId = req.params.gameId;
-        const a = await cartService.isGameInCart(userId, gameId)
-        if (a) {
-            return res.status(400).json(true)
-        }
-        return res.status(200).json(false)
-    } catch (error) { res.status(500).json({ error: 'loi roi' }) }
-}
+        const cart = await cartService.removeFromCart(userId, gameId);
+        if (cart.error) return res.status(cart.statusCode || 400).json({ error: cart.error });
+        res.status(200).json(cart);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     addToCart,
     getCartByUserId,
     removeFromCart,
-    isGameInCart
-}
+    isGameInCart,
+    removeFromCartLegacy
+};

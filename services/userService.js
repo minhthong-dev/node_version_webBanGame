@@ -4,6 +4,7 @@ const emailService = require('./emailService');
 const paymentService = require('./paymentService');
 const historyService = require('./historyService');
 const socketApi = require('../config/socket');
+const bcrypt = require('bcrypt');
 const historyChatService = require('./historyChatService');
 // admin
 const getallUsers = async () => {
@@ -150,6 +151,55 @@ const updateAmount = async (userId, amount) => {
     }
     return true;
 }
+const updatePassRequest = async (userId) => {
+    try {
+        const user = await User.findById(userId)
+        if (!user) {
+            return false;
+        }
+        user.otpChangePass = otpUtils.generateOTP();
+        user.otpChangePassExpiry = otpUtils.generateOTPExpiry();
+        console.log(user.otpChangePass)
+        await user.save();
+        await emailService.sendUpdatePassEmail(user.email, user.otpChangePass);
+        return true;
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+}
+const updatePass = async (otp, newPass) => {
+    try {
+        const user = await User.findOne({ otpChangePass: otp });
+        console.log(newPass)
+        console.log(user)
+        console.log(otp)
+        if (user.otpChangePass != otp) {
+            return { error: "opt khong hop le" };
+        }
+        if (user.otpChangePassExpiry < Date.now()) {
+            user.otpChangePass = null;
+            user.otpChangePassExpiry = null;
+            await user.save();
+            return { error: "opt da het han, vui long nhan lai otp" };
+        }
+        const isMatch = await bcrypt.compare(newPass, user.password);
+        if (isMatch) {
+            console.log("isMatch", isMatch)
+            return { error: "mat khau moi cung dc trung voi mau khau cu" };
+        }
+        user.password = newPass;
+        user.otpChangePass = null;
+        user.otpChangePassExpiry = null;
+        console.log("user: ", user)
+        await user.save();
+        return { success: true };
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+}
+
 module.exports = {
     registerUser,
     loginUser,
@@ -162,5 +212,7 @@ module.exports = {
     updateAmount,
     getAmoutByid,
     oauthCallBack,
+    updatePassRequest,
+    updatePass,
     getAdminList
 };
