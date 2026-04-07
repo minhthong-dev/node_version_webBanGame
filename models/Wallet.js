@@ -1,21 +1,24 @@
 const mongoose = require('mongoose');
 
 const walletSchema = new mongoose.Schema({
-    name: { 
-        type: String, 
-        required: true 
+    name: {
+        type: String,
+        required: true
     },
-    price: { 
-        type: Number, 
+    price: { // Giá bán VNĐ
+        type: Number,
         required: true,
-        min: 0 
+        min: 0
     },
-    stock: { 
-        type: Number, 
+    description: {
+        type: String
+    },
+    stock: {
+        type: Number,
         required: true,
-        default: 0 
+        default: 0
     },
-    categoryId: {
+    idWalletCategory: { // Link bằng ObjectId tới WalletCategory
         type: mongoose.Schema.Types.ObjectId,
         ref: 'WalletCategory',
         required: true

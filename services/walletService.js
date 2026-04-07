@@ -1,16 +1,16 @@
 const Wallet = require('../models/Wallet');
 const WalletCategory = require('../models/WalletCategory');
 
-const createWalletCategory = async (name) => {
-    return await WalletCategory.create({ name });
+const createWalletCategory = async (data) => {
+    return await WalletCategory.create(data);
 };
 
-const getAllCategories = async () => {
+const getAllWalletCategories = async () => {
     return await WalletCategory.find();
 };
 
-const updateWalletCategory = async (id, name) => {
-    return await WalletCategory.findByIdAndUpdate(id, { name }, { new: true });
+const updateWalletCategory = async (id, data) => {
+    return await WalletCategory.findByIdAndUpdate(id, data, { new: true });
 };
 
 const deleteWalletCategory = async (id) => {
@@ -22,11 +22,11 @@ const createWallet = async (data) => {
 };
 
 const getAllWallets = async () => {
-    return await Wallet.find().populate('categoryId');
+    return await Wallet.find().populate('idWalletCategory');
 };
 
 const getWalletById = async (id) => {
-    return await Wallet.findById(id).populate('categoryId');
+    return await Wallet.findById(id).populate('idWalletCategory');
 };
 
 const updateWallet = async (id, data) => {
