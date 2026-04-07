@@ -1,9 +1,9 @@
+
 const walletService = require('../services/walletService');
 
 exports.createWalletCategory = async (req, res) => {
     try {
-        const { name } = req.body;
-        const newCategory = await walletService.createWalletCategory(name);
+        const newCategory = await walletService.createWalletCategory(req.body);
         res.status(201).json({ success: true, data: newCategory });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -19,6 +19,25 @@ exports.getAllWalletCategories = async (req, res) => {
     }
 };
 
+exports.updateCategory = async (req, res) => {
+    try {
+        const updatedCategory = await walletService.updateWalletCategory(req.params.id, req.body);
+        res.status(200).json(updatedCategory);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.deleteCategory = async (req, res) => {
+    try {
+        await walletService.deleteWalletCategory(req.params.id);
+        res.status(200).json({ success: true, message: 'Deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Wallet Routes
 exports.createWallet = async (req, res) => {
     try {
         const newWallet = await walletService.createWallet(req.body);
@@ -32,15 +51,6 @@ exports.getAllWallets = async (req, res) => {
     try {
         const wallets = await walletService.getAllWallets();
         res.status(200).json(wallets);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
-
-exports.getWalletById = async (req, res) => {
-    try {
-        const wallet = await walletService.getWalletById(req.params.id);
-        res.status(200).json(wallet);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

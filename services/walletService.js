@@ -5,7 +5,7 @@ const createWalletCategory = async (name) => {
     return await WalletCategory.create({ name });
 };
 
-const getAllWalletCategories = async () => {
+const getAllCategories = async () => {
     return await WalletCategory.find();
 };
 
@@ -35,4 +35,16 @@ const updateWallet = async (id, data) => {
 
 const deleteWallet = async (id) => {
     return await Wallet.findByIdAndDelete(id);
+};
+
+module.exports = {
+    createWalletCategory,
+    getAllWalletCategories,
+    updateWalletCategory,
+    deleteWalletCategory,
+    createWallet,
+    getAllWallets,
+    getWalletById,
+    updateWallet,
+    deleteWallet
 };
