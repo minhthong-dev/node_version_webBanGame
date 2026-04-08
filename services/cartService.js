@@ -7,33 +7,34 @@ const normalizeQty = (quantity) => {
     return Number.isInteger(qty) && qty > 0 ? qty : null;
 };
 
-const addToCart = async (userId, product, quantity = 1) => {
+const addToCart = async (userId, gameId, quantity = 1) => {
     try {
         const qty = normalizeQty(quantity);
         if (!qty) {
             return { error: 'quantity không hợp lệ' };
         }
-        console.log('Adding to cart:', { userId, product, quantity: qty });
-        const inventoryOfProduct = await inventoryModel.findOne({ gameId: product });
-        if (!inventoryOfProduct) return { error: 'khong ton tai product', statusCode: 404 };
+        const inventoryOfGame = await inventoryModel.findOne({ gameId });
+        // If game doesn't have inventory record yet, treat as out of stock
+        if (!inventoryOfGame) return { error: 'Hết hàng', statusCode: 409 };
 
         let cart = await cartModel.findOne({ userId });
         if (!cart) {
             cart = await cartModel.create({ userId, products: [] });
         }
 
-        const index = cart.products.findIndex((item) => item.product.toString() === product.toString());
-        const available = inventoryOfProduct.stock - inventoryOfProduct.reserved;
+        const index = cart.products.findIndex((item) => item.product.toString() === gameId.toString());
+        const available = inventoryOfGame.stock - inventoryOfGame.reserved;
+        if (available <= 0) return { error: 'Hết hàng', statusCode: 409 };
 
         if (index < 0) {
             if (available < qty) {
-                return { error: 'so luong san phan trong kho khong du', statusCode: 404 };
+                return { error: 'Hết hàng', statusCode: 409 };
             }
-            cart.products.push({ product, quantity: qty });
+            cart.products.push({ product: gameId, quantity: qty });
         } else {
             const nextQty = cart.products[index].quantity + qty;
             if (available < nextQty) {
-                return { error: 'so luong san phan trong kho khong du', statusCode: 404 };
+                return { error: 'Hết hàng', statusCode: 409 };
             }
             cart.products[index].quantity = nextQty;
         }
@@ -57,15 +58,16 @@ const getCartByUserId = async (userId) => {
     }
 };
 
-const removeFromCart = async (userId, product, quantity = null) => {
+const removeFromCart = async (userId, gameId, quantity = null) => {
     try {
-        const inventoryOfProduct = await inventoryModel.findOne({ gameId: product });
-        if (!inventoryOfProduct) return { error: 'khong ton tai product', statusCode: 404 };
+        const inventoryOfGame = await inventoryModel.findOne({ gameId });
+        // If inventory record is missing, treat as out of stock (consistent messaging)
+        if (!inventoryOfGame) return { error: 'Hết hàng', statusCode: 409 };
 
         const cart = await cartModel.findOne({ userId });
         if (!cart) return { error: 'trong gio hang khong co san pham nay', statusCode: 404 };
 
-        const index = cart.products.findIndex((item) => item.product.toString() === product.toString());
+        const index = cart.products.findIndex((item) => item.product.toString() === gameId.toString());
         if (index < 0) {
             return { error: 'trong gio hang khong co san pham nay', statusCode: 404 };
         }
@@ -95,10 +97,10 @@ const removeFromCart = async (userId, product, quantity = null) => {
     }
 };
 
-const isGameInCart = async (userId, product) => {
+const isGameInCart = async (userId, gameId) => {
     try {
         const cart = await cartModel.findOne({ userId });
-        if (cart) return cart.products.some((item) => item.product.toString() === product.toString());
+        if (cart) return cart.products.some((item) => item.product.toString() === gameId.toString());
         return false;
     } catch (error) {
         console.error('Error checking if game is in cart:', error);

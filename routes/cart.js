@@ -13,7 +13,7 @@ router.post('/add', validateTokenExpires, cartController.addToCart);
 
 router.post('/remove/:product', validateTokenExpires, cartController.removeFromCart);
 
-router.get('/incart/:product', validateTokenExpires, cartController.isGameInCart);
+router.get('/incart/:gameId', validateTokenExpires, cartController.isGameInCart);
 
 router.get('/gameincart/:userId/:gameId', validateTokenExpires, cartController.isGameInCart);
 

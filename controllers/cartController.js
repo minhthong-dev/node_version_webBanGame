@@ -2,9 +2,12 @@ const cartService = require('../services/cartService');
 
 const addToCart = async (req, res) => {
     try {
-        const { gameId ,userId} = req.body;
-        const quantity = req.body.quantity || 1;
-        const cart = await cartService.addToCart(userId, gameId, quantity);
+        const { product, gameId, quantity } = req.body;
+        const resolvedGameId = gameId || product;
+        const userId = req.user?._id;
+        if (!userId) return res.status(401).json({ error: 'unauthorized' });
+        if (!resolvedGameId) return res.status(400).json({ error: 'Thiếu gameId' });
+        const cart = await cartService.addToCart(userId, resolvedGameId, quantity || 1);
         if (cart.error) return res.status(cart.statusCode || 400).json({ error: cart.error });
         res.status(200).json(cart);
     } catch (error) {
@@ -25,8 +28,10 @@ const getCartByUserId = async (req, res) => {
 const removeFromCart = async (req, res) => {
     try {
         const userId = req.user._id;
-        const { product, quantity } = req.body;
-        const cart = await cartService.removeFromCart(userId, product, quantity);
+        const { product, gameId, quantity } = req.body;
+        const resolvedGameId = gameId || product;
+        if (!resolvedGameId) return res.status(400).json({ error: 'Thiếu gameId' });
+        const cart = await cartService.removeFromCart(userId, resolvedGameId, quantity);
         if (cart.error) return res.status(cart.statusCode || 400).json({ error: cart.error });
         res.status(200).json(cart);
     } catch (error) {
@@ -37,8 +42,10 @@ const removeFromCart = async (req, res) => {
 const isGameInCart = async (req, res) => {
     try {
         const userId = req.user._id;
-        const { product } = req.params;
-        const exists = await cartService.isGameInCart(userId, product);
+        const { gameId, product } = req.params;
+        const resolvedGameId = gameId || product;
+        if (!resolvedGameId) return res.status(400).json({ error: 'Thiếu gameId' });
+        const exists = await cartService.isGameInCart(userId, resolvedGameId);
         return res.status(200).json(exists);
     } catch (error) { res.status(500).json({ error: 'loi roi' }); }
 };
