@@ -15,6 +15,8 @@ router.post('/remove', validateTokenExpires, cartController.removeFromCart);
 
 router.get('/incart/:product', validateTokenExpires, cartController.isGameInCart);
 
+router.get('/gameincart/:userId/:gameId', validateTokenExpires, cartController.isGameInCart);
+
 router.delete('/:userId/:gameId', cartController.removeFromCartLegacy);
 
 module.exports = router;
