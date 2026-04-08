@@ -11,7 +11,7 @@ router.get('/:userId', validateTokenExpires, cartController.getCartByUserId);
 
 router.post('/add', validateTokenExpires, cartController.addToCart);
 
-router.post('/remove', validateTokenExpires, cartController.removeFromCart);
+router.post('/remove/:product', validateTokenExpires, cartController.removeFromCart);
 
 router.get('/incart/:product', validateTokenExpires, cartController.isGameInCart);
 

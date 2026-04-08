@@ -2,9 +2,9 @@ const cartService = require('../services/cartService');
 
 const addToCart = async (req, res) => {
     try {
-        const { product, quantity } = req.body;
-        const userId = req.user._id;
-        const cart = await cartService.addToCart(userId, product, quantity);
+        const { gameId ,userId} = req.body;
+        const quantity = req.body.quantity || 1;
+        const cart = await cartService.addToCart(userId, gameId, quantity);
         if (cart.error) return res.status(cart.statusCode || 400).json({ error: cart.error });
         res.status(200).json(cart);
     } catch (error) {

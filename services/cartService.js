@@ -13,7 +13,7 @@ const addToCart = async (userId, product, quantity = 1) => {
         if (!qty) {
             return { error: 'quantity không hợp lệ' };
         }
-
+        console.log('Adding to cart:', { userId, product, quantity: qty });
         const inventoryOfProduct = await inventoryModel.findOne({ gameId: product });
         if (!inventoryOfProduct) return { error: 'khong ton tai product', statusCode: 404 };
 
@@ -49,7 +49,7 @@ const addToCart = async (userId, product, quantity = 1) => {
 const getCartByUserId = async (userId) => {
     try {
         const cart = await cartModel.findOne({ userId }).populate('products.product');
-        if (!cart) return { userId, products: [] };
+        if (!cart) return { userId, games: [] };
         return cart;
     } catch (error) {
         console.error('Error getting cart by user id:', error);
