@@ -1,4 +1,5 @@
 const gameModel = require('../models/Game');
+const Inventory = require('../models/Inventory');
 // const userModel = require('../models/userModel');
 const gameService = require('../services/gameService');
 exports.createGame = async (req, res) => {
@@ -29,6 +30,29 @@ exports.getGameById = async (req, res) => {
         return res.json(game);
     } catch (error) {
         return res.status(500).json({ error: 'loi loi loi' });
+    }
+};
+
+exports.getGameDetail = async (req, res) => {
+    try {
+        const gameId = req.params.id;
+        const game = await gameService.getGameById(gameId);
+        if (!game) {
+            return res.status(404).json({ message: 'Không tìm thấy game' });
+        }
+        const inventory = await Inventory.findOne({ gameId });
+        const stock = inventory ? inventory.stock : 0;
+        const reserved = inventory ? inventory.reserved : 0;
+        return res.status(200).json({
+            ...game.toObject(),
+            inventory: {
+                stock,
+                reserved,
+                available: stock - reserved
+            }
+        });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
     }
 };
 exports.updateGame = async (req, res) => {

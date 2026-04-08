@@ -106,9 +106,23 @@ const isGameInCart = async (userId, product) => {
     }
 };
 
+const getAllCarts = async () => {
+    try {
+        const carts = await cartModel
+            .find()
+            .populate('userId', 'username email')
+            .populate('products.product', 'name price media');
+        return carts;
+    } catch (error) {
+        console.error('Error getting all carts:', error);
+        throw new Error('loi khi lay toan bo gio hang');
+    }
+};
+
 module.exports = {
     addToCart,
     getCartByUserId,
     removeFromCart,
-    isGameInCart
+    isGameInCart,
+    getAllCarts
 };

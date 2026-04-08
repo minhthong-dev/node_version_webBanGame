@@ -69,4 +69,22 @@ const getStock = async (req, res) => {
     }
 };
 
-module.exports = { addStock, getStock };
+const getAllStock = async (req, res) => {
+    try {
+        const inventories = await Inventory.find()
+            .populate('gameId', 'name price media genre');
+        const result = inventories.map(inv => ({
+            _id: inv._id,
+            game: inv.gameId,
+            stock: inv.stock,
+            reserved: inv.reserved,
+            available: inv.stock - inv.reserved,
+            updatedAt: inv.updatedAt
+        }));
+        return res.status(200).json({ total: result.length, data: result });
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+};
+
+module.exports = { addStock, getStock, getAllStock };
