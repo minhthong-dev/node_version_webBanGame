@@ -18,6 +18,7 @@ var buyRouter = require('./routes/buy');
 var historyChatRouter = require('./routes/historychat');
 var inventoryRouter = require('./routes/inventory');
 var preOrderRouter = require('./routes/preorder');
+var payOsRouter = require('./routes/payos')
 const session = require('express-session');
 require('./config/oauthConfig');
 
@@ -60,6 +61,7 @@ app.use('/api/buy', buyRouter);
 app.use('/api/historychat', historyChatRouter);
 app.use('/api/inventory', inventoryRouter);
 app.use('/api/preorder', preOrderRouter);
+app.use('/api/payos', payOsRouter)
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
