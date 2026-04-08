@@ -34,6 +34,9 @@ router.get('/all', gameController.getAllGames);
 
 router.get('/search', gameController.searchGames);
 
+//detail
+router.get('/:id/detail', gameController.getGameDetail);
+
 router.get('/:id', gameController.getGameById);
 
 router.put('/:id', validateAdmin, gameController.updateGame);

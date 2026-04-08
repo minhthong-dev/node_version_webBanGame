@@ -62,10 +62,20 @@ const removeFromCartLegacy = async (req, res) => {
     }
 };
 
+const getAllCarts = async (req, res) => {
+    try {
+        const carts = await cartService.getAllCarts();
+        res.status(200).json({ total: carts.length, data: carts });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     addToCart,
     getCartByUserId,
     removeFromCart,
     isGameInCart,
-    removeFromCartLegacy
+    removeFromCartLegacy,
+    getAllCarts
 };

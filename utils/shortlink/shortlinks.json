@@ -166,5 +166,13 @@
       "userId": "69d1ccbb85a232337494efb3"
     },
     "expiresAt": 1775360716326
+  },
+  "380d0cc0": {
+    "targetUrl": "http://localhost:3636/api/users/verify-email?token=b0a638a3a54a6d824f2c89975984369d3a8d7914728d4189c7927a888075cf69&shortId=380d0cc0",
+    "type": "verify_email",
+    "payload": {
+      "userId": "69d505f89cc40b3d806a18b1"
+    },
+    "expiresAt": 1775571977720
   }
 }
