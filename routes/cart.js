@@ -7,7 +7,7 @@ const validateAdmin = require('../middlewares/validateAdmin');
 // GET /api/cart/all - Admin: lấy toàn bộ giỏ hàng
 router.get('/all', validateAdmin, cartController.getAllCarts);
 
-router.get('/', validateTokenExpires, cartController.getCartByUserId);
+router.get('/:userId', validateTokenExpires, cartController.getCartByUserId);
 
 router.post('/add', validateTokenExpires, cartController.addToCart);
 
