@@ -9,7 +9,7 @@ router.post('/add', validateTokenExpires, cartController.addToCart);
 
 router.post('/remove', validateTokenExpires, cartController.removeFromCart);
 
-router.get('/incart/:product', validateTokenExpires, cartController.isGameInCart);
+router.get('/incart/:gameId', validateTokenExpires, cartController.isGameInCart);
 
 router.delete('/:userId/:gameId', cartController.removeFromCartLegacy);
 
