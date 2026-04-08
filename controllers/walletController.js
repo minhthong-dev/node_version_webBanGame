@@ -1,11 +1,13 @@
+
 const walletService = require('../services/walletService');
 
 exports.createWalletCategory = async (req, res) => {
     try {
-        const { name } = req.body;
-        const newCategory = await walletService.createWalletCategory(name);
+        console.log("Dữ liệu nhận được:", req.body); // Xem dữ liệu gửi lên là gì
+        const newCategory = await walletService.createWalletCategory(req.body);
         res.status(201).json({ success: true, data: newCategory });
     } catch (error) {
+        console.error("LỖI BACKEND CHI TIẾT:", error); // Dòng này sẽ hiện lỗi đỏ ở terminal
         res.status(500).json({ error: error.message });
     }
 };
@@ -19,6 +21,25 @@ exports.getAllWalletCategories = async (req, res) => {
     }
 };
 
+exports.updateCategory = async (req, res) => {
+    try {
+        const updatedCategory = await walletService.updateWalletCategory(req.params.id, req.body);
+        res.status(200).json(updatedCategory);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.deleteCategory = async (req, res) => {
+    try {
+        await walletService.deleteWalletCategory(req.params.id);
+        res.status(200).json({ success: true, message: 'Deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Wallet Routes
 exports.createWallet = async (req, res) => {
     try {
         const newWallet = await walletService.createWallet(req.body);
@@ -40,6 +61,7 @@ exports.getAllWallets = async (req, res) => {
 exports.getWalletById = async (req, res) => {
     try {
         const wallet = await walletService.getWalletById(req.params.id);
+        if (!wallet) return res.status(404).json({ message: 'Wallet not found' });
         res.status(200).json(wallet);
     } catch (error) {
         res.status(500).json({ error: error.message });

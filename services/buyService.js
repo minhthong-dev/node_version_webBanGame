@@ -3,6 +3,7 @@ const userModel = require('../models/User');
 const gameModel = require('../models/Game');
 const inventoryModel = require('../models/Inventory');
 const cartModel = require('../models/Cart');
+const walletModel = require('../models/Wallet');
 const historyService = require('./historyService');
 const socketApi = require('../config/socket');
 const emailService = require('./emailService');
@@ -101,4 +102,72 @@ const buyGame = async (userId) => {
     return { success: true, boughtGames, totalAmount };
 };
 
-module.exports = { buyGame };
+const buyWallet = async (userId, walletId) => {
+    const session = await mongoose.startSession();
+    let boughtWallet = null;
+    let userEmail = null;
+    let totalAmount = 0;
+
+    try {
+        await session.withTransaction(async () => {
+            const user = await userModel.findById(userId).session(session);
+            if (!user) throw new Error('user_not_found');
+            userEmail = user.email;
+
+            const wallet = await walletModel.findById(walletId).session(session);
+            if (!wallet) throw new Error('wallet_not_found');
+
+            if (wallet.stock < 1) {
+                throw new Error(`out_of_stock:${wallet.name}`);
+            }
+
+            totalAmount = Number(wallet.price);
+            const balance = Number(user.amount);
+            const safeBalance = Number.isFinite(balance) ? balance : 0;
+
+            if (safeBalance < totalAmount) {
+                const err = new Error('not_enough_money');
+                err.balance = safeBalance;
+                err.totalRequired = totalAmount;
+                throw err;
+            }
+
+            wallet.stock -= 1;
+            await wallet.save({ session });
+
+            user.amount = safeBalance - totalAmount;
+            await user.save({ session });
+
+            const walletKey = crypto.randomBytes(8).toString('hex').toUpperCase();
+            boughtWallet = { name: wallet.name, key: walletKey };
+
+            await historyService.createHistory(userId, 'buying', totalAmount, [walletId]); 
+        });
+    } catch (error) {
+        session.endSession();
+        console.error('Error in buyWallet:', error);
+        const msg = error.message;
+        if (msg === 'user_not_found') return { error: 'User không tồn tại' };
+        if (msg === 'wallet_not_found') return { error: 'Thẻ không tồn tại' };
+        if (msg === 'not_enough_money') {
+            return {
+                error: 'Số dư không đủ để thanh toán',
+                balance: error.balance,
+                totalRequired: error.totalRequired
+            };
+        }
+        if (msg.startsWith('out_of_stock:')) return { error: `Hết hàng: ${msg.split(':')[1]}` };
+        return { error: 'Lỗi hệ thống, vui lòng thử lại' };
+    }
+
+    session.endSession();
+
+    socketApi.io.to(userId.toString()).emit('buy_success', 'update_amount');
+    if (boughtWallet) {
+        await emailService.sendBuyGameSuccessEmail(userEmail, [boughtWallet]);
+    }
+
+    return { success: true, boughtWallet, totalAmount, key: boughtWallet.key };
+};
+
+module.exports = { buyGame, buyWallet };
