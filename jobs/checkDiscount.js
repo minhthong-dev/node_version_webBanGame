@@ -3,44 +3,30 @@ const discountModel = require('../models/Discount');
 exports.checkStopDiscount = async () => {
     try {
         const now = new Date();
-        console.log('now: ', now.toISOString());
-        const discounts = await discountModel.find({
-            isActive: true,
-            endDate: { $lt: now }
-        });
-        console.log(`Found ${discounts.length} discounts (expired).`);
-        if (discounts.length > 0) {
-            const discountIds = discounts.map(discount => discount._id);
-            const result = await discountModel.updateMany({
-                _id: { $in: discountIds }
-            }, {
-                isActive: false
-            });
-            console.log(`Updated ${result.modifiedCount} discounts (expired).`);
-        }
+        await discountModel.updateMany(
+            {
+                isActive: true,
+                endDate: { $lt: now }
+            },
+            { $set: { isActive: false } }
+        );
     } catch (err) {
-        console.error('Error updating expired discounts:', err);
+        console.error('Error:', err);
     }
-},
+};
+
 exports.checkStartDiscount = async () => {
     try {
         const now = new Date();
-        console.log('now: ', now.toISOString());
-        const discounts = await discountModel.find({
-            isActive: false,
-            startDate: { $lte: now }
-        });
-        console.log(`Found ${discounts.length} discounts (ready to start).`);
-        if (discounts.length > 0) {
-            const discountIds = discounts.map(discount => discount._id);
-            const result = await discountModel.updateMany({
-                _id: { $in: discountIds }
-            }, {
-                isActive: true
-            });
-            console.log(`Updated ${result.modifiedCount} discounts (started).`);
-        }
+        await discountModel.updateMany(
+            {
+                isActive: false,
+                startDate: { $lte: now },
+                endDate: { $gt: now }
+            },
+            { $set: { isActive: true } }
+        );
     } catch (err) {
-        return console.error('Error updating start discounts:', err);
+        console.error('Error:', err);
     }
-}
+};
