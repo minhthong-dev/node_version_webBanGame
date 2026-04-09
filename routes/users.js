@@ -66,6 +66,7 @@ router.post('/login', validateUser, async function (req, res, next) {
 });
 // oauth
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
 router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), userController.oauthCallBack);
 // xac nhan email
 router.get('/verify-email', async function (req, res, next) {
