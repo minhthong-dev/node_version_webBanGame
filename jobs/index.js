@@ -3,7 +3,8 @@ const convertToUTC = (date = new Date()) => new Date(date).toISOString();
 
 const cronjob = require('node-cron');
 const checkVerifyToken = require('./checkVerifyToken');
-const checkDiscount = require('./checkDiscount');
+const discountJob = require('./checkDiscount');
+
 const fulfillPreOrders = require('./fulfillPreOrders');
 
 const checkPaymentExpire = require('./checkPaymentExpire');
@@ -11,7 +12,8 @@ const checkPaymentExpire = require('./checkPaymentExpire');
 cronjob.schedule('* * * * *', () => {
     console.log('Running checkVerifyToken job every minute');
     checkVerifyToken.checkVerifyToken();
-    checkDiscount.checkDiscount();
+    discountJob.checkStartDiscount();
+    discountJob.checkStopDiscount();
     fulfillPreOrders.fulfillPreOrders();
     checkPaymentExpire.checkPaymentExpire();
     console.log('Cron job for checkVerifyToken has been scheduled, time now : ', convertToUTC());
