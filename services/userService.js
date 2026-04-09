@@ -6,6 +6,7 @@ const historyService = require('./historyService');
 const socketApi = require('../config/socket');
 const bcrypt = require('bcrypt');
 const historyChatService = require('./historyChatService');
+const { boolean } = require('joi');
 // admin
 const getallUsers = async () => {
     return await User.find({});
@@ -33,6 +34,18 @@ const getAdminList = async () => {
         role: { $in: ['admin', 'super_admin'] }
     });
     return adminList;
+}
+const isBlock = async (userId) => {
+    const user = await User.findById(userId);
+    if (!user) {
+        return { error: "user khong ton tai" };
+    }
+    else {
+        if (user.isBlock) {
+            return true;
+        }
+    }
+    return false;
 }
 // auth
 const registerUser = async (userData) => {
@@ -214,5 +227,7 @@ module.exports = {
     oauthCallBack,
     updatePassRequest,
     updatePass,
-    getAdminList
+    getAdminList,
+    isBlock
+
 };

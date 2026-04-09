@@ -1,6 +1,7 @@
 
 const { Server } = require('socket.io');
 const checkAdmin = require('../utils/checkAdmin');
+const userService = require('../services/userService')
 const io = new Server({
     cors: {
         origin: ["http://localhost:5173", "http://localhost:5174", "https://adminwebbangame.vercel.app"],
@@ -71,6 +72,14 @@ io.on('connection', (socket) => {
         socket.to(data.room).emit('receive_admin_message', data);
     })
 
+    socket.on('isBlock', (data) => {
+        console.log("isBlock: ", data);
+        const isBlock = userService.isBlock(data.id);
+        if (isBlock) {
+            socket.emit('receive_user_block', data.id);
+        }
+    })
+
     socket.on('user_online_list', (data) => {
         console.log("user_online_list: ", data);
         const ArryUser = Array.from(onlineUser.values());
@@ -94,7 +103,11 @@ io.on('connection', (socket) => {
         //console.log("targetId: ", targetId);
         if (data) {
             console.log("targetId: ", data);
-            socket.emit('receive_user_block', 'may da bi block roi con chos', data);
+            try {
+                socket.emit('receive_user_block', data.userId);
+            } catch (error) {
+                return error
+            }
         }
     })
 
