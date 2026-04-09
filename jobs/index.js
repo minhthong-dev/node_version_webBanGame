@@ -12,8 +12,7 @@ const checkPaymentExpire = require('./checkPaymentExpire');
 cronjob.schedule('* * * * *', () => {
     console.log('Running checkVerifyToken job every minute');
     checkVerifyToken.checkVerifyToken();
-    discountJob.checkStartDiscount();
-    discountJob.checkStopDiscount();
+    discountJob.checkDiscountStatus();
     fulfillPreOrders.fulfillPreOrders();
     checkPaymentExpire.checkPaymentExpire();
     console.log('Cron job for checkVerifyToken has been scheduled, time now : ', convertToUTC());

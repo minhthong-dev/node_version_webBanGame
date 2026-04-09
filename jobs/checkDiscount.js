@@ -1,31 +1,31 @@
 const discountModel = require('../models/Discount');
 
-exports.checkStopDiscount = async () => {
+exports.checkDiscountStatus = async () => {
     try {
         const now = new Date();
-        await discountModel.updateMany(
+        const bulkOps = [
             {
-                isActive: true,
-                endDate: { $lt: now }
+                updateMany: {
+                    filter: {
+                        isActive: true,
+                        endDate: { $lt: now }
+                    },
+                    update: { $set: { isActive: false } }
+                }
             },
-            { $set: { isActive: false } }
-        );
-    } catch (err) {
-        console.error('Error:', err);
-    }
-};
-
-exports.checkStartDiscount = async () => {
-    try {
-        const now = new Date();
-        await discountModel.updateMany(
             {
-                isActive: false,
-                startDate: { $lte: now },
-                endDate: { $gt: now }
-            },
-            { $set: { isActive: true } }
-        );
+                updateMany: {
+                    filter: {
+                        isActive: false,
+                        startDate: { $lte: now },
+                        endDate: { $gt: now }
+                    },
+                    update: { $set: { isActive: true } }
+                }
+            }
+        ];
+        
+        await discountModel.bulkWrite(bulkOps);
     } catch (err) {
         console.error('Error:', err);
     }
