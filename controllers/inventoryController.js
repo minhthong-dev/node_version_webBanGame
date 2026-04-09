@@ -41,8 +41,8 @@ const addStock = async (req, res) => {
             mode === 'set'
                 ? `Đã đặt tồn kho = ${qty} cho game`
                 : qty === 0
-                  ? 'Không thay đổi số lượng (cộng 0); tồn kho hiện tại giữ nguyên'
-                  : `Đã thêm ${qty} sản phẩm vào kho cho game`;
+                    ? 'Không thay đổi số lượng (cộng 0); tồn kho hiện tại giữ nguyên'
+                    : `Đã thêm ${qty} sản phẩm vào kho cho game`;
 
         return res.status(200).json({
             success: true,
@@ -61,13 +61,23 @@ const addStock = async (req, res) => {
 const getStock = async (req, res) => {
     try {
         const { gameId } = req.params;
-        const inventory = await Inventory.findOne({ gameId });
-        if (!inventory) return res.status(404).json({ error: 'Không tìm thấy inventory' });
+
+        // Nếu chưa có inventory thì tự tạo với stock = 0 (upsert)
+        const inventory = await Inventory.findOneAndUpdate(
+            { gameId },
+            { $setOnInsert: { stock: 0, reserved: 0 } },
+            { new: true, upsert: true, setDefaultsOnInsert: true }
+        );
+
         return res.status(200).json(inventory);
     } catch (err) {
+        // if (err.kind === 'ObjectId') {
+        //     return res.status(400).json({ error: 'ID Game không đúng định dạng' });
+        // }
         return res.status(500).json({ error: err.message });
     }
 };
+
 
 const getAllStock = async (req, res) => {
     try {
