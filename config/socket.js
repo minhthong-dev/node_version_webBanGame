@@ -1,7 +1,7 @@
 
 const { Server } = require('socket.io');
 const checkAdmin = require('../utils/checkAdmin');
-const userService = require('../services/userService')
+// Bỏ import userService ở top-level để tránh circular dependency
 const io = new Server({
     cors: {
         origin: ["http://localhost:5173", "http://localhost:5174", "https://adminwebbangame.vercel.app"],
@@ -72,11 +72,23 @@ io.on('connection', (socket) => {
         socket.to(data.room).emit('receive_admin_message', data);
     })
 
-    socket.on('isBlock', (data) => {
+    socket.on('isBlock', async (data) => {
         console.log("isBlock: ", data);
-        const isBlock = userService.isBlock(data.id);
-        if (isBlock) {
-            socket.emit('receive_user_block', data.id);
+        const userId = data.data.id;
+        if (userId) {
+            try {
+                const userService = require('../services/userService');
+                const isBlock = await userService.isUserBlock(userId);
+                console.log("isBlock: ", isBlock);
+                if (isBlock === true) {
+                    setTimeout(() => {
+                        socket.emit('receive_user_block', { id: userId, message: "m bi khoa roi con chos" });
+                        console.log("da gui block toi user")
+                    }, 1000);
+                }
+            } catch (error) {
+                console.error("Lỗi khi check isBlock:", error);
+            }
         }
     })
 
@@ -88,23 +100,11 @@ io.on('connection', (socket) => {
     })
     socket.on('user_block', (data) => {
         console.log("user_block: ", data);
-        // let targetId = null;
-        // try {
-        //     for (const [key, value] of onlineUser) {
-        //         console.log("value: ", value.data);
-        //         // console.log("key: ", key);
-        //         if (value.data.userId === data.id) {
-        //             targetId = key;
-        //         }
-        //     }
-        // } catch (error) {
-        //     console.log(error);
-        // }
-        //console.log("targetId: ", targetId);
         if (data) {
             console.log("targetId: ", data);
             try {
-                socket.emit('receive_user_block', data.userId);
+                io.emit('receive_user_block', { id: data.userId, message: "m bi khoa roi con chos" });
+                console.log("da gui emit tới tất cả payload: ", { id: data.userId, message: "Tài khoản của bạn đã bị khóa" })
             } catch (error) {
                 return error
             }

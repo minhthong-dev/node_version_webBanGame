@@ -35,7 +35,7 @@ const getAdminList = async () => {
     });
     return adminList;
 }
-const isBlock = async (userId) => {
+var isUserBlock = async (userId) => {
     const user = await User.findById(userId);
     if (!user) {
         return { error: "user khong ton tai" };
@@ -228,6 +228,5 @@ module.exports = {
     updatePassRequest,
     updatePass,
     getAdminList,
-    isBlock
-
+    isUserBlock
 };
