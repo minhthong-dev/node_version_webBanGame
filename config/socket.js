@@ -3,7 +3,7 @@ const { Server } = require('socket.io');
 const checkAdmin = require('../utils/checkAdmin');
 const io = new Server({
     cors: {
-        origin: ["http://localhost:5173", "http://localhost:5174","https://adminwebbangame.vercel.app"],
+        origin: ["http://localhost:5173", "http://localhost:5174", "https://adminwebbangame.vercel.app"],
         methods: ["GET", "POST"],
         credentials: true
     }
@@ -79,22 +79,22 @@ io.on('connection', (socket) => {
     })
     socket.on('user_block', (data) => {
         console.log("user_block: ", data);
-        let targetId = null;
-        try {
-            for (const [key, value] of onlineUser) {
-                console.log("value: ", value.data);
-                // console.log("key: ", key);
-                if (value.data.userId === data.id) {
-                    targetId = key;
-                }
-            }
-        } catch (error) {
-            console.log(error);
-        }
-        console.log("targetId: ", targetId);
-        if (targetId) {
-            console.log("targetId: ", targetId);
-            socket.to(targetId).emit('receive_user_block', 'may da bi block roi con chos');
+        // let targetId = null;
+        // try {
+        //     for (const [key, value] of onlineUser) {
+        //         console.log("value: ", value.data);
+        //         // console.log("key: ", key);
+        //         if (value.data.userId === data.id) {
+        //             targetId = key;
+        //         }
+        //     }
+        // } catch (error) {
+        //     console.log(error);
+        // }
+        //console.log("targetId: ", targetId);
+        if (data) {
+            console.log("targetId: ", data);
+            socket.emit('receive_user_block', 'may da bi block roi con chos', data);
         }
     })
 
