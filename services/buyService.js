@@ -5,6 +5,7 @@ const inventoryModel = require('../models/Inventory');
 const cartModel = require('../models/Cart');
 const walletModel = require('../models/Wallet');
 const historyService = require('./historyService');
+const { checkIsGameDiscount } = require('./discountService');
 const socketApi = require('../config/socket');
 const emailService = require('./emailService');
 const crypto = require('crypto');
@@ -39,10 +40,13 @@ const buyGame = async (userId) => {
                     throw new Error(`out_of_stock:${game.name}`);
                 }
 
-                const price = Number(game.price);
-                const lineTotal = (Number.isFinite(price) ? price : 0) * qty;
+                const basePrice = Number.isFinite(Number(game.price)) ? Number(game.price) : 0;
+                const discountInfo = await checkIsGameDiscount(gameId);
+                const discountPct = discountInfo ? Number(discountInfo.discount) : 0;
+                const finalPrice = basePrice * (1 - discountPct / 100);
+                const lineTotal = finalPrice * qty;
                 totalAmount += lineTotal;
-                lines.push({ gameId, qty, game, lineTotal });
+                lines.push({ gameId, qty, game, lineTotal, discountPct });
             }
 
             const balance = Number(user.amount);
@@ -141,7 +145,7 @@ const buyWallet = async (userId, walletId) => {
             const walletKey = crypto.randomBytes(8).toString('hex').toUpperCase();
             boughtWallet = { name: wallet.name, key: walletKey };
 
-            await historyService.createHistory(userId, 'buying', totalAmount, [walletId]); 
+            await historyService.createHistory(userId, 'buying', totalAmount, [walletId]);
         });
     } catch (error) {
         session.endSession();
