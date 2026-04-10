@@ -1,5 +1,6 @@
+const { errorMonitor } = require('nodemailer/lib/xoauth2');
 const discountModel = require('../models/Discount');
-
+const gameModel = require('../models/Game')
 const getAllDiscounts = async () => {
     try {
         const discounts = await discountModel.find();
@@ -71,10 +72,29 @@ const deleteDiscount = async (id) => {
         throw new Error('Lỗi khi xóa mã giảm giá');
     }
 }
+const checkIsGameDiscount = async (id) => {
+    try {
+        const game = await gameModel.findById(id).select('genre').lean();
+        if (!game) return false;
+        const discount = await discountModel.findOne({
+            isActive: true,
+            $or: [
+                { categoriesId: { $in: game.genre } },
+                { gamesId: id.toString() }
+            ]
+        }).lean();
+
+        return discount || false;
+    } catch (error) {
+        console.error('Error in checkIsGameDiscount:', error);
+        return false;
+    }
+}
 module.exports = {
     getAllDiscounts,
     getDiscountById,
     createDiscount,
     updateDiscount,
-    deleteDiscount
+    deleteDiscount,
+    checkIsGameDiscount
 }
